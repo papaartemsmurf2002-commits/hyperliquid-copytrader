@@ -1,0 +1,237 @@
+{
+  "archive_sha256": "04e4a98411cbbd95a69122a8b354ca69e8127a13fc4b48fcd2604e7ec11990bd",
+  "database_sha256": "38a8684f0e4ed584d77d104661e961630d3232fc64f082a0dfebd15db1b6b130",
+  "exchange_actions_sent": false,
+  "failure_log_sha256": "8cbca77324106c3f88541cf57c7fc52654fe2c15cc4b6bcc8db2555e9cd204ba",
+  "network_and_exchange_excluded": true,
+  "operator_credentials_read": false,
+  "percentile_method": "nearest_rank",
+  "release_gate_evidence": false,
+  "scheduler_bound_ms": 100,
+  "schema_version": 1,
+  "scope": "partial failed full-workload run; native Windows local compute only",
+  "stage_distributions_at_failure": {
+    "local_receive_to_applied_cursor_commit [direct]": {
+      "count": 4791,
+      "max_ms": 109.3829,
+      "p50_ms": 35.965,
+      "p95_ms": 60.5849,
+      "p99_ms": 70.157
+    },
+    "local_receive_to_applied_cursor_commit [replay_or_seed]": {
+      "count": 20,
+      "max_ms": 3.8322,
+      "p50_ms": 3.5721,
+      "p95_ms": 3.8127,
+      "p99_ms": 3.8322
+    },
+    "local_receive_to_desired_state_produced [direct]": {
+      "count": 4791,
+      "max_ms": 100.0236,
+      "p50_ms": 27.0324,
+      "p95_ms": 45.8865,
+      "p99_ms": 55.3664
+    },
+    "local_receive_to_desired_state_produced [replay_or_seed]": {
+      "count": 20,
+      "max_ms": 2.486,
+      "p50_ms": 2.2247,
+      "p95_ms": 2.4439,
+      "p99_ms": 2.486
+    },
+    "local_receive_to_durable_ingress_commit [direct]": {
+      "count": 3919,
+      "max_ms": 76.1769,
+      "p50_ms": 19.8374,
+      "p95_ms": 34.3424,
+      "p99_ms": 42.5165
+    },
+    "local_receive_to_durable_ingress_commit [replay_or_seed]": {
+      "count": 20,
+      "max_ms": 1.4487,
+      "p50_ms": 1.1093,
+      "p95_ms": 1.2785,
+      "p99_ms": 1.4487
+    },
+    "local_receive_to_post_action_state_commit [aggregate]": {
+      "count": 437,
+      "max_ms": 230.1858,
+      "p50_ms": 164.4741,
+      "p95_ms": 193.2414,
+      "p99_ms": 216.6628
+    },
+    "local_receive_to_post_action_state_commit [direct]": {
+      "count": 434,
+      "max_ms": 206.9365,
+      "p50_ms": 167.9068,
+      "p95_ms": 194.0445,
+      "p99_ms": 199.2867
+    },
+    "local_receive_to_send_end [aggregate]": {
+      "count": 437,
+      "max_ms": 170.6574,
+      "p50_ms": 101.1411,
+      "p95_ms": 128.1119,
+      "p99_ms": 135.5947
+    },
+    "local_receive_to_send_end [direct]": {
+      "count": 434,
+      "max_ms": 154.7346,
+      "p50_ms": 103.7366,
+      "p95_ms": 128.769,
+      "p99_ms": 136.2413
+    },
+    "local_receive_to_signed_transport_start [aggregate]": {
+      "count": 437,
+      "max_ms": 170.6525,
+      "p50_ms": 101.135,
+      "p95_ms": 128.1049,
+      "p99_ms": 135.589
+    },
+    "local_receive_to_signed_transport_start [direct]": {
+      "count": 434,
+      "max_ms": 154.7288,
+      "p50_ms": 103.7309,
+      "p95_ms": 128.7614,
+      "p99_ms": 136.2343
+    },
+    "local_receive_to_signing_start [aggregate]": {
+      "count": 437,
+      "max_ms": 107.9472,
+      "p50_ms": 73.616,
+      "p95_ms": 99.5517,
+      "p99_ms": 105.5459
+    },
+    "local_receive_to_signing_start [direct]": {
+      "count": 434,
+      "max_ms": 135.9567,
+      "p50_ms": 78.2662,
+      "p95_ms": 101.8936,
+      "p99_ms": 107.2201
+    },
+    "signed_transport_start_to_committed_response [aggregate]": {
+      "count": 437,
+      "max_ms": 71.3917,
+      "p50_ms": 35.3806,
+      "p95_ms": 54.2572,
+      "p99_ms": 59.8289
+    },
+    "signed_transport_start_to_committed_response [direct]": {
+      "count": 434,
+      "max_ms": 64.5498,
+      "p50_ms": 37.1585,
+      "p95_ms": 51.5744,
+      "p99_ms": 56.3858
+    },
+    "signed_transport_start_to_send_end [aggregate]": {
+      "count": 437,
+      "max_ms": 0.0556,
+      "p50_ms": 0.0072,
+      "p95_ms": 0.0092,
+      "p99_ms": 0.0117
+    },
+    "signed_transport_start_to_send_end [direct]": {
+      "count": 434,
+      "max_ms": 0.1799,
+      "p50_ms": 0.007,
+      "p95_ms": 0.0091,
+      "p99_ms": 0.0118
+    },
+    "signing_start_to_signing_end [aggregate]": {
+      "count": 437,
+      "max_ms": 76.6773,
+      "p50_ms": 24.9941,
+      "p95_ms": 38.2788,
+      "p99_ms": 45.9009
+    },
+    "signing_start_to_signing_end [direct]": {
+      "count": 434,
+      "max_ms": 47.4625,
+      "p50_ms": 23.3235,
+      "p95_ms": 37.5057,
+      "p99_ms": 45.6475
+    },
+    "source_exchange_to_final_follower_fill [direct]": {
+      "count": 434,
+      "max_ms": 520.0,
+      "p50_ms": 450.0,
+      "p95_ms": 492.0,
+      "p99_ms": 516.0
+    },
+    "source_exchange_to_first_follower_fill [direct]": {
+      "count": 434,
+      "max_ms": 520.0,
+      "p50_ms": 450.0,
+      "p95_ms": 492.0,
+      "p99_ms": 516.0
+    },
+    "source_exchange_to_local_receive [direct]": {
+      "count": 4791,
+      "max_ms": 536.0,
+      "p50_ms": 192.0,
+      "p95_ms": 476.0,
+      "p99_ms": 502.0
+    },
+    "source_exchange_to_local_receive [replay_or_seed]": {
+      "count": 20,
+      "max_ms": 8.0,
+      "p50_ms": 2.0,
+      "p95_ms": 8.0,
+      "p99_ms": 8.0
+    },
+    "source_ingress_queue_wait [direct]": {
+      "count": 4791,
+      "max_ms": 99.6233,
+      "p50_ms": 26.7304,
+      "p95_ms": 45.6674,
+      "p99_ms": 55.0508
+    },
+    "source_ingress_queue_wait [replay_or_seed]": {
+      "count": 20,
+      "max_ms": 2.3169,
+      "p50_ms": 2.1099,
+      "p95_ms": 2.2998,
+      "p99_ms": 2.3169
+    }
+  },
+  "table_counts_at_failure": {
+    "action_state_transitions": 4356,
+    "action_states": 872,
+    "catalog_asset_history": 10,
+    "catalog_diffs": 10,
+    "catalog_market_transitions": 10,
+    "catalog_revisions": 1,
+    "config_revisions": 0,
+    "control_audit": 0,
+    "deferred_delta_contributions": 868,
+    "deferred_delta_transitions": 1315,
+    "deferred_deltas": 10,
+    "desired_state_commits": 4811,
+    "desired_states": 4811,
+    "execution_reports": 0,
+    "follower_intents": 0,
+    "follower_state_revisions": 3065,
+    "reaction_results": 4811,
+    "reconcile_snapshots": 0,
+    "runner_heartbeats": 0,
+    "runtime_events": 4819,
+    "runtime_leases": 0,
+    "safe_mode_transitions": 0,
+    "schema_meta": 1,
+    "signed_action_attempts": 0,
+    "signer_epochs": 10,
+    "source_event_reactions": 0,
+    "source_events": 0,
+    "source_state_revisions": 4811,
+    "stage_timings": 30148,
+    "stream_partitions": 20,
+    "stream_state_transitions": 30
+  },
+  "terminal_failure": "aggregate scheduler release bound exceeded",
+  "workload_requested": {
+    "aggregation_cases_per_slot": 100,
+    "direct_cycles_per_slot": 500,
+    "full_fleet_slots": 10,
+    "raw_frames": 100000
+  }
+}

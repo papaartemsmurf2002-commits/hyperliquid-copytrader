@@ -1,0 +1,84 @@
+scope=native Windows local compute only; network and exchange excluded
+release_gate_evidence=false
+operator_credentials_read=false
+exchange_actions_sent=false
+runtime_root=C:\Users\papaa\AppData\Local\hlct-omega3-offline-benchmark-20260717T124513Z
+elapsed_ms=4569.238
+
+Traceback (most recent call last):
+  File "C:\Users\papaa\OneDrive\Документы\copytradehyperliquid\hyperliquid-copytrader\src\hyperliquid_copytrader\journal_writer.py", line 98, in offer
+    self._queue.put_nowait((priority, self._sequence, command))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\papaa\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\queues.py", line 166, in put_nowait
+    raise QueueFull
+asyncio.queues.QueueFull
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\papaa\OneDrive\Документы\copytradehyperliquid\hyperliquid-copytrader\src\hyperliquid_copytrader\performance_benchmark.py", line 1345, in run_production_path_benchmark
+    slot_results = await asyncio.gather(*(exercise_slot(slot) for slot in plan.enabled_slots))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\papaa\OneDrive\Документы\copytradehyperliquid\hyperliquid-copytrader\src\hyperliquid_copytrader\performance_benchmark.py", line 1334, in exercise_slot
+    await apply_target(
+    ...<3 lines>...
+    )
+  File "C:\Users\papaa\OneDrive\Документы\copytradehyperliquid\hyperliquid-copytrader\src\hyperliquid_copytrader\performance_benchmark.py", line 1276, in apply_target
+    await _route_frame(
+    ...<12 lines>...
+    )
+  File "C:\Users\papaa\OneDrive\Документы\copytradehyperliquid\hyperliquid-copytrader\src\hyperliquid_copytrader\performance_benchmark.py", line 573, in _route_frame
+    await task
+  File "C:\Users\papaa\OneDrive\Документы\copytradehyperliquid\hyperliquid-copytrader\src\hyperliquid_copytrader\fleet_runtime.py", line 713, in _run
+    await self._handle_wake(event)
+  File "C:\Users\papaa\OneDrive\Документы\copytradehyperliquid\hyperliquid-copytrader\src\hyperliquid_copytrader\fleet_runtime.py", line 2097, in _handle_wake
+    await self._apply(
+    ...<15 lines>...
+    )
+  File "C:\Users\papaa\OneDrive\Документы\copytradehyperliquid\hyperliquid-copytrader\src\hyperliquid_copytrader\fleet_runtime.py", line 1684, in _apply
+    self.journal.offer(
+    ~~~~~~~~~~~~~~~~~~^
+        "record_stage_timing",
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<13 lines>...
+        payload={"slot_queue_capacity": self.queue.maxsize},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\papaa\OneDrive\Документы\copytradehyperliquid\hyperliquid-copytrader\src\hyperliquid_copytrader\journal_writer.py", line 103, in offer
+    raise JournalQueueFull(detail) from exc
+hyperliquid_copytrader.journal_writer.JournalQueueFull: journal queue overflow while enqueuing record_stage_timing
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\papaa\OneDrive\Документы\copytradehyperliquid\hyperliquid-copytrader\src\hyperliquid_copytrader\journal_writer.py", line 98, in offer
+    self._queue.put_nowait((priority, self._sequence, command))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\papaa\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\queues.py", line 166, in put_nowait
+    raise QueueFull
+asyncio.queues.QueueFull
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\papaa\OneDrive\Документы\copytradehyperliquid\hyperliquid-copytrader\audit\omega3\BENCHMARKS\run_offline_production_path.py", line 88, in _main
+    result = await run_production_path_benchmark(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<15 lines>...
+    )
+    ^
+  File "C:\Users\papaa\OneDrive\Документы\copytradehyperliquid\hyperliquid-copytrader\src\hyperliquid_copytrader\performance_benchmark.py", line 1364, in run_production_path_benchmark
+    await gateway.stop()
+  File "C:\Users\papaa\OneDrive\Документы\copytradehyperliquid\hyperliquid-copytrader\src\hyperliquid_copytrader\stream_gateway.py", line 314, in stop
+    await self._transition(source, StreamState.STOPPED)
+  File "C:\Users\papaa\OneDrive\Документы\copytradehyperliquid\hyperliquid-copytrader\src\hyperliquid_copytrader\stream_gateway.py", line 970, in _transition
+    await self.journal.submit(
+    ...<6 lines>...
+    )
+  File "C:\Users\papaa\OneDrive\Документы\copytradehyperliquid\hyperliquid-copytrader\src\hyperliquid_copytrader\journal_writer.py", line 108, in submit
+    return await self.offer(method, *args, **kwargs)
+                 ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\papaa\OneDrive\Документы\copytradehyperliquid\hyperliquid-copytrader\src\hyperliquid_copytrader\journal_writer.py", line 103, in offer
+    raise JournalQueueFull(detail) from exc
+hyperliquid_copytrader.journal_writer.JournalQueueFull: journal queue overflow while enqueuing set_stream_partition_state

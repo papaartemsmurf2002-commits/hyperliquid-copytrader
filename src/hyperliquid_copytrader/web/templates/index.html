@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hyperliquid Fleet & Analytics</title>
+  <style nonce="{{ csp_nonce }}">
+    :root {
+      color-scheme: dark;
+      --bg: #080c13;
+      --surface: #0e1520;
+      --surface-raised: #121c2a;
+      --surface-soft: #0a111b;
+      --line: #253247;
+      --line-strong: #364860;
+      --text: #e8eef7;
+      --muted: #91a0b5;
+      --faint: #68768a;
+      --blue: #73aef8;
+      --green: #45d197;
+      --amber: #e7ad4e;
+      --red: #f17878;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font: 13px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    button, input, select, textarea, .nav-link { font: inherit; }
+    button, .nav-link {
+      display: inline-flex;
+      min-height: 36px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #447dbd;
+      border-radius: 8px;
+      padding: 0 13px;
+      background: #1f64a8;
+      color: #fff;
+      font-weight: 720;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    button.secondary, .nav-link { border-color: var(--line-strong); background: #162234; color: var(--text); }
+    button.danger { border-color: #a84d54; background: #702b31; }
+    button:disabled { cursor: not-allowed; opacity: .42; }
+    input, select, textarea {
+      width: 100%;
+      min-height: 36px;
+      border: 1px solid var(--line-strong);
+      border-radius: 7px;
+      padding: 7px 9px;
+      background: #09111c;
+      color: var(--text);
+    }
+    textarea { min-height: 64px; resize: vertical; }
+    input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, .nav-link:focus-visible, summary:focus-visible {
+      outline: 2px solid var(--blue);
+      outline-offset: 2px;
+    }
+    code, .mono { font-family: "Cascadia Code", Consolas, monospace; }
+    [hidden] { display: none !important; }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: 20px; letter-spacing: -.02em; }
+    h2 { font-size: 15px; }
+    h3 { font-size: 12px; }
+    .muted, .sub { color: var(--muted); }
+    .sub { margin-top: 3px; }
+    .positive { color: var(--green); }
+    .negative { color: var(--red); }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--line);
+      background: rgba(8, 12, 19, .96);
+    }
+    .topbar-inner, main { width: min(1540px, calc(100% - 28px)); margin: 0 auto; }
+    .topbar-inner { display: flex; min-height: 68px; align-items: center; justify-content: space-between; gap: 16px; }
+    .header-actions, .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .pill, .state-chip {
+      display: inline-flex;
+      min-height: 26px;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px 9px;
+      background: #111a28;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .pill::before, .state-chip::before {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--faint);
+      content: "";
+    }
+    .pill.ok, .state-chip.ok { border-color: #286248; color: var(--green); }
+    .pill.ok::before, .state-chip.ok::before { background: var(--green); }
+    .pill.warn, .state-chip.warn { border-color: #6a552c; color: var(--amber); }
+    .pill.warn::before, .state-chip.warn::before { background: var(--amber); }
+    .pill.bad, .state-chip.bad { border-color: #6d383d; color: var(--red); }
+    .pill.bad::before, .state-chip.bad::before { background: var(--red); }
+    .alarm-banner {
+      border-bottom: 1px solid #794047;
+      background: #421d23;
+      color: #ffe2e2;
+    }
+    .alarm-inner {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      width: min(1540px, calc(100% - 28px));
+      min-height: 58px;
+      margin: 0 auto;
+      padding: 8px 0;
+    }
+    .alarm-mark { font-size: 20px; }
+    .alarm-title { font-weight: 800; }
+    .alarm-detail { margin-top: 2px; color: #f7bfc2; }
+    .alarm-actions { display: flex; gap: 7px; }
+    main { display: grid; gap: 12px; padding: 14px 0 34px; }
+    .panel { min-width: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 15px; border-bottom: 1px solid var(--line); }
+    .panel-body { padding: 14px 15px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(7, minmax(120px, 1fr)); }
+    .summary-item { min-width: 0; padding: 12px 14px; border-right: 1px solid var(--line); }
+    .summary-item:last-child { border-right: 0; }
+    .summary-item span { display: block; color: var(--muted); font-size: 11px; }
+    .summary-item strong { display: block; margin-top: 5px; overflow-wrap: anywhere; font-size: 14px; }
+    .notice { border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; background: var(--surface-soft); color: var(--muted); overflow-wrap: anywhere; }
+    .notice.bad { border-color: #6d383d; color: var(--red); }
+    .notice.warn { border-color: #6a552c; color: var(--amber); }
+    .spaced { margin-top: 10px; }
+    .spaced-lg { margin-top: 12px; }
+    .table-wrap { overflow: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 9px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+    th { position: sticky; top: 0; z-index: 1; background: var(--surface); color: var(--muted); font-size: 10px; letter-spacing: .055em; text-transform: uppercase; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: rgba(115, 174, 248, .035); }
+    .operations-table { min-width: 1190px; }
+    .operations-table td { height: 58px; }
+    .account-id { font-weight: 800; }
+    .account-meta { display: block; max-width: 190px; margin-top: 2px; overflow: hidden; color: var(--muted); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+    .datum-main { display: block; font-weight: 700; }
+    .datum-sub, .datum-unavailable { display: block; margin-top: 2px; color: var(--muted); font-size: 11px; }
+    .datum-unavailable { color: var(--faint); }
+    .error-text { display: block; max-width: 260px; color: var(--red); overflow-wrap: anywhere; }
+    .control-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 12px; }
+    .field { min-width: 150px; flex: 1 1 190px; }
+    .field label { display: block; margin-bottom: 5px; color: var(--muted); font-size: 11px; font-weight: 700; }
+    details.management { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+    details.management > summary { display: flex; min-height: 50px; align-items: center; justify-content: space-between; padding: 0 15px; cursor: pointer; font-weight: 800; }
+    details.management[open] > summary { border-bottom: 1px solid var(--line); }
+    details.management > .details-body { padding: 14px 15px; }
+    .fleet-table { min-width: 1260px; }
+    td input, td select, td textarea { min-width: 142px; }
+    .leader-input { min-width: 300px; }
+    .markets-input { min-width: 320px; }
+    .risk-fields { display: grid; grid-template-columns: repeat(2, minmax(86px, 1fr)); gap: 6px; min-width: 205px; }
+    .risk-fields label { color: var(--muted); font-size: 9px; text-transform: uppercase; }
+    .risk-fields input { min-width: 86px; }
+    .check { display: flex; gap: 7px; align-items: center; color: var(--muted); }
+    .check input { width: auto; min-width: 17px; min-height: 17px; }
+    .profile-form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 13px; }
+    .profile-form .wide { grid-column: 1 / -1; }
+    .profile-form .span-2 { grid-column: span 2; }
+    pre { margin: 0; max-height: 260px; overflow: auto; white-space: pre-wrap; word-break: break-word; color: #b7c4d5; font-size: 11px; }
+    @media (max-width: 1100px) {
+      .summary-grid { grid-template-columns: repeat(4, minmax(120px, 1fr)); }
+      .summary-item { border-bottom: 1px solid var(--line); }
+      .control-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      .topbar { position: static; }
+      .topbar-inner, .panel-head { align-items: flex-start; flex-direction: column; }
+      .topbar-inner { padding: 12px 0; }
+      .header-actions { width: 100%; }
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .summary-item { border-right: 0; }
+      .profile-form { grid-template-columns: 1fr; }
+      .profile-form .span-2 { grid-column: auto; }
+      .alarm-inner { grid-template-columns: auto minmax(0, 1fr); }
+      .alarm-actions { grid-column: 1 / -1; }
+      .operations-table { display: block; min-width: 0; }
+      .operations-table thead { display: none; }
+      .operations-table tbody { display: grid; gap: 8px; padding: 8px; }
+      .operations-table tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 8px; background: var(--surface-soft); }
+      .operations-table td { display: block; min-width: 0; height: auto; padding: 8px; border: 0; }
+      .operations-table td::before { display: block; margin-bottom: 4px; color: var(--faint); content: attr(data-label); font-size: 9px; font-weight: 760; letter-spacing: .05em; text-transform: uppercase; }
+      .operations-table .account-meta, .operations-table .error-text { max-width: none; }
+    }
+    @media (max-width: 420px) {
+      .topbar-inner, main, .alarm-inner { width: min(100% - 18px, 1540px); }
+      .summary-grid { grid-template-columns: 1fr; }
+      .summary-item { border-bottom: 1px solid var(--line); }
+      button, .nav-link { width: 100%; }
+      .toolbar, .alarm-actions { display: grid; grid-template-columns: 1fr; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <h1>Hyperliquid Fleet & Analytics</h1>
+        <p class="sub">Operational account state, execution health, and deliberate control.</p>
+      </div>
+      <div class="header-actions">
+        <span class="pill" id="health-pill">checking</span>
+        <button class="secondary" id="alarm-audio-toggle" type="button" aria-pressed="false">Enable alarm sound</button>
+        <a class="nav-link" href="/analytics" aria-label="Analytics: 30D Profit Leaderboard and Address Analyzer">Analytics</a>
+      </div>
+    </div>
+  </header>
+
+  <aside class="alarm-banner" id="disconnect-alarm" role="alert" aria-live="assertive" hidden>
+    <div class="alarm-inner">
+      <div class="alarm-mark" aria-hidden="true">!</div>
+      <div>
+        <div class="alarm-title" id="disconnect-alarm-title">Prolonged disconnect</div>
+        <div class="alarm-detail" id="disconnect-alarm-detail">Connectivity has not recovered.</div>
+      </div>
+      <div class="alarm-actions">
+        <button class="secondary" id="alarm-acknowledge" type="button">Acknowledge</button>
+        <button class="secondary" id="alarm-mute" type="button">Mute sound</button>
+      </div>
+    </div>
+  </aside>
+
+  <main id="continuous-fleet-console">
+    {% if not continuous_launch_capable %}
+    <section class="panel">
+      <div class="panel-body">
+        <h2>Fleet controller is not configured</h2>
+        <p class="sub">Restart with <code>--continuous-plan &lt;plan.json&gt;</code>. Analytics and account setup remain available.</p>
+      </div>
+    </section>
+    {% else %}
+    <section class="panel" aria-labelledby="global-status-heading">
+      <div class="panel-head">
+        <div><h2 id="global-status-heading">Fleet status</h2><p class="sub">Runner-owned state. Refreshed every ten seconds.</p></div>
+        <button class="secondary" id="refresh-status" type="button">Refresh</button>
+      </div>
+      <div class="summary-grid">
+        <div class="summary-item"><span>Runner</span><strong id="runner-state">waiting</strong></div>
+        <div class="summary-item"><span>Leader feed</span><strong id="leader-feed-state">not reported</strong></div>
+        <div class="summary-item"><span>Accounts</span><strong id="ready-slots">0 healthy / 0</strong></div>
+        <div class="summary-item"><span>Execution</span><strong id="execution-state">off</strong></div>
+        <div class="summary-item"><span>Generation</span><strong id="run-generation">none</strong></div>
+        <div class="summary-item"><span>Followers flat</span><strong id="followers-flat">not reported</strong></div>
+        <div class="summary-item"><span>Heartbeat</span><strong id="status-age">not reported</strong></div>
+        <div class="summary-item"><span>Backlog</span><strong id="backlog-count">not reported</strong></div>
+        <div class="summary-item"><span>Diagnostics</span><strong id="diagnostics-state">not reported</strong></div>
+        <div class="summary-item"><span>Active alarms</span><strong id="alarm-count">0</strong></div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="account-board-heading">
+      <div class="panel-head">
+        <div><h2 id="account-board-heading">Follower account board</h2><p class="sub">Canonical runtime state only. Missing telemetry is labeled, never inferred.</p></div>
+        <span class="pill" id="account-board-pill">waiting for plan</span>
+      </div>
+      <div class="table-wrap">
+        <table class="operations-table">
+          <thead><tr><th>Account</th><th>Operating state</th><th>Connectivity</th><th>Latest leader event</th><th>Acknowledgement / latency</th><th>Work</th><th>Market / position</th><th>Synchronization / error</th></tr></thead>
+          <tbody id="account-board-rows"><tr><td colspan="8" class="datum-unavailable">Inspecting the configured fleet.</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="control-grid">
+      <section class="panel" aria-labelledby="run-controls-heading">
+        <div class="panel-head"><div><h2 id="run-controls-heading">Run control</h2><p class="sub">Typed acknowledgement is required.</p></div></div>
+        <div class="panel-body">
+          <div class="toolbar">
+            <div class="field"><label for="start-ack">Start acknowledgement</label><input class="mono" id="start-ack" placeholder="LIVE_CONTINUOUS" autocomplete="off"></div>
+            <button id="start-fleet" type="button" disabled>Start runner</button>
+            <div class="field"><label for="stop-ack">Graceful stop acknowledgement</label><input class="mono" id="stop-ack" placeholder="STOP_CONTINUOUS" autocomplete="off"></div>
+            <button class="danger" id="stop-fleet" type="button" disabled>Stop fleet</button>
+          </div>
+          <div class="notice spaced" id="action-notice">No control action requested.</div>
+        </div>
+      </section>
+      <section class="panel" aria-labelledby="plan-summary-heading">
+        <div class="panel-head"><div><h2 id="plan-summary-heading">Plan summary</h2><p class="sub">Configuration is editable only while stopped.</p></div><span class="pill" id="plan-pill">not inspected</span></div>
+        <div class="panel-body">
+          <div class="toolbar"><button id="inspect-plan" type="button">Inspect plan</button><span class="muted" id="market-coverage">Dynamic market policy not inspected</span></div>
+          <div class="notice spaced" id="plan-notice">Inspect the configured plan before launching.</div>
+        </div>
+      </section>
+    </div>
+
+    <details class="management" id="fleet-plan-management">
+      <summary><span>Fleet plan</span><span class="muted">accounts, leaders, sizing and limits</span></summary>
+      <div class="details-body">
+        <div class="toolbar">
+          <button class="secondary" id="add-slot" type="button">Add account</button>
+          <div class="field"><label for="combined-cap">Combined gross cap (USD)</label><input id="combined-cap" inputmode="decimal" autocomplete="off"></div>
+          <div class="field"><label for="fleet-update-ack">Fleet update acknowledgement</label><input class="mono" id="fleet-update-ack" placeholder="UPDATE_FLEET" autocomplete="off"></div>
+          <button class="secondary" id="save-fleet" type="button" disabled>Save fleet</button>
+        </div>
+        <div class="table-wrap spaced" id="slots-wrap" hidden>
+          <table class="fleet-table"><thead><tr><th>Slot / enabled</th><th>Leader</th><th>Profile / follower</th><th>Market policy</th><th>Sizing &amp; limits</th><th>Runtime state</th><th></th></tr></thead><tbody id="slot-rows"></tbody></table>
+        </div>
+        <details class="spaced"><summary>Plan and runtime paths</summary><pre id="path-details">not loaded</pre></details>
+      </div>
+    </details>
+    {% endif %}
+
+    <details class="management" id="fleet-accounts-panel">
+      <summary><span>Fleet accounts</span><span class="muted">isolated follower profiles</span></summary>
+      <div class="details-body">
+        <div class="toolbar"><button class="secondary" id="refresh-profiles" type="button">Refresh accounts</button></div>
+        <div class="notice spaced" id="profiles-notice">Loading saved fleet accounts.</div>
+        <div class="table-wrap spaced"><table><thead><tr><th>Profile</th><th>Leader</th><th>Follower</th><th>Mode</th><th>Market policy</th><th>Status</th></tr></thead><tbody id="profile-rows"></tbody></table></div>
+        <details class="spaced-lg" id="add-profile-details"><summary>Add a fleet account</summary>
+          <form id="profile-form" class="profile-form">
+            <div class="field"><label for="profile-id">Profile / slot ID</label><input id="profile-id" required pattern="[a-z0-9][a-z0-9_-]{0,63}" placeholder="acc3"></div>
+            <div class="field"><label for="profile-label">Label</label><input id="profile-label" required maxlength="64" placeholder="Follower account 3"></div>
+            <div class="field"><label for="profile-mode">Account mode</label><select id="profile-mode"><option value="unified">Unified</option><option value="standard">Standard</option></select></div>
+            <div class="field span-2"><label for="profile-leader">Leader address</label><input class="mono" id="profile-leader" required pattern="0x[0-9a-fA-F]{40}" maxlength="42"></div>
+            <div class="field"><label for="profile-sub-name">Subaccount name</label><input id="profile-sub-name" required maxlength="64" placeholder="acc3"></div>
+            <div class="field span-2"><label for="profile-global">Main / global account address</label><input class="mono" id="profile-global" required pattern="0x[0-9a-fA-F]{40}" maxlength="42"></div>
+            <div class="field"><label for="profile-follower">Follower subaccount address</label><input class="mono" id="profile-follower" required pattern="0x[0-9a-fA-F]{40}" maxlength="42"></div>
+            <div class="field span-2"><label for="profile-api-wallet">Dedicated API wallet address</label><input class="mono" id="profile-api-wallet" required pattern="0x[0-9a-fA-F]{40}" maxlength="42"></div>
+            <div class="field"><label for="profile-api-key">Dedicated API-wallet private key</label><input class="mono" id="profile-api-key" type="password" required pattern="0x[0-9a-fA-F]{64}" maxlength="66" autocomplete="new-password"></div>
+            <div class="field span-2"><label for="profile-denied">Denied markets (optional)</label><input id="profile-denied" placeholder="Blank means all active markets"></div>
+            <label class="check"><input id="profile-dedicated" type="checkbox" required> Dedicated API-wallet key, never the main-account key.</label>
+            <div class="wide toolbar"><button id="profile-submit" type="submit" disabled>Save isolated account</button><span class="muted">Saving does not start the fleet or submit an exchange action.</span></div>
+          </form>
+        </details>
+      </div>
+    </details>
+  </main>
+
+  <script nonce="{{ csp_nonce }}">
+  (() => {
+    const $ = (id) => document.getElementById(id);
+    const shortAddress = (value) => { const text = String(value || ""); return text.length > 14 ? `${text.slice(0, 8)}…${text.slice(-6)}` : text || "—"; };
+    async function api(url, options = {}) {
+      const response = await fetch(url, { credentials: "same-origin", headers: { "Content-Type": "application/json", ...(options.headers || {}) }, ...options });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.detail || `${response.status} ${response.statusText}`);
+      return payload;
+    }
+    function setNotice(element, text, tone = "") { element.textContent = text; element.className = `notice ${tone}`.trim(); }
+    function cell(text, className = "") { const td = document.createElement("td"); td.textContent = text; td.className = className; return td; }
+    function updateProfileSubmit() { const form = $("profile-form"); $("profile-submit").disabled = !form.checkValidity(); }
+    async function loadProfiles() {
+      try {
+        const payload = await api("/api/credential-profiles");
+        const rows = $("profile-rows"); rows.replaceChildren();
+        for (const profile of payload.profiles || []) {
+          const tr = document.createElement("tr");
+          const identity = cell(profile.profile_id || "invalid");
+          const label = document.createElement("div"); label.className = "muted"; label.textContent = profile.profile_label || ""; identity.appendChild(label);
+          tr.append(identity, cell(shortAddress(profile.source_wallet), "mono"), cell(shortAddress(profile.follower_account_address), "mono"), cell(profile.expected_account_mode || "—"), cell(profile.eligibility === "all_active_markets" ? `All active${(profile.denied_symbols || []).length ? `; denied: ${profile.denied_symbols.join(", ")}` : ""}` : "invalid"), cell(profile.configured ? "saved / key sealed" : profile.status || "invalid"));
+          rows.appendChild(tr);
+        }
+        if (!(payload.profiles || []).length) {
+          const tr = document.createElement("tr"), td = document.createElement("td");
+          td.colSpan = 6; td.className = "datum-unavailable"; td.textContent = "No saved fleet accounts."; tr.appendChild(td); rows.appendChild(tr);
+        }
+        setNotice($("profiles-notice"), `${payload.profile_count || 0} saved account profiles. Secret values are never returned.`);
+        window.dispatchEvent(new CustomEvent("fleet-profiles-loaded", { detail: payload.profiles || [] }));
+      } catch (error) { setNotice($("profiles-notice"), String(error), "bad"); }
+    }
+    $("refresh-profiles").addEventListener("click", loadProfiles);
+    $("profile-id").addEventListener("input", () => { if (!$("profile-sub-name").value) $("profile-sub-name").value = $("profile-id").value; });
+    $("profile-form").addEventListener("input", updateProfileSubmit);
+    $("profile-form").addEventListener("change", updateProfileSubmit);
+    $("profile-form").addEventListener("submit", async (event) => {
+      event.preventDefault(); if (!event.currentTarget.reportValidity()) return;
+      const payload = { profile_id: $("profile-id").value.trim().toLowerCase(), profile_label: $("profile-label").value.trim(), network: "mainnet", source_wallet: $("profile-leader").value.trim().toLowerCase(), global_account_address: $("profile-global").value.trim().toLowerCase(), subaccount_name: $("profile-sub-name").value.trim(), follower_account_address: $("profile-follower").value.trim().toLowerCase(), api_wallet_address: $("profile-api-wallet").value.trim().toLowerCase(), api_private_key: $("profile-api-key").value.trim(), expected_account_mode: $("profile-mode").value, coin: "BTC", eligibility: "all_active_markets", denied_symbols: $("profile-denied").value, api_key_is_dedicated: $("profile-dedicated").checked };
+      $("profile-submit").disabled = true;
+      try {
+        await api("/api/credential-profiles", { method: "POST", body: JSON.stringify(payload) });
+        $("profile-api-key").value = ""; $("profile-dedicated").checked = false;
+        setNotice($("profiles-notice"), `Saved ${payload.profile_id}. Add it to the stopped fleet plan above.`);
+        event.currentTarget.reset(); await loadProfiles();
+      } catch (error) { setNotice($("profiles-notice"), String(error), "bad"); }
+      finally { updateProfileSubmit(); }
+    });
+    updateProfileSubmit(); loadProfiles();
+  })();
+  </script>
+
+  {% if continuous_launch_capable %}
+  <script nonce="{{ csp_nonce }}">
+  (() => {
+    const $ = (id) => document.getElementById(id);
+    const health = $("health-pill"), planPill = $("plan-pill"), planNotice = $("plan-notice"), actionNotice = $("action-notice"), slotRows = $("slot-rows");
+    let preview = null, status = null, profiles = [], draft = [], marketSymbols = null, marketUniverse = null, busy = false;
+    let audioContext = null, audioEnabled = false, alarmAcknowledged = false, alarmPulseTimer = null, localOutageStarted = null, stableRestoreStarted = null;
+    const RESTORE_STABLE_MS = 5000;
+    async function api(url, options = {}) { const response = await fetch(url, { credentials: "same-origin", headers: { "Content-Type": "application/json", ...(options.headers || {}) }, ...options }); const payload = await response.json().catch(() => ({})); if (!response.ok) throw new Error(payload.detail || `${response.status} ${response.statusText}`); return payload; }
+    const shortAddress = (value) => { const text = String(value || ""); return text.length > 14 ? `${text.slice(0, 8)}…${text.slice(-6)}` : text || "—"; };
+    const number = (value) => { const parsed = Number(value); return Number.isFinite(parsed) ? parsed : null; };
+    function pill(el, text, tone = "") { el.textContent = text; el.className = `pill ${tone}`.trim(); }
+    function notice(el, text, tone = "") { el.textContent = text; el.className = `notice ${tone}`.trim(); }
+    function ageText(value) {
+      const n = number(value); if (n === null) return "not reported";
+      const age = n > 1_000_000_000_000 ? Math.max(0, Date.now() - n) : Math.max(0, n);
+      if (age < 1000) return `${Math.round(age)} ms`;
+      if (age < 60_000) return `${(age / 1000).toFixed(age < 10_000 ? 1 : 0)} s`;
+      return `${Math.floor(age / 60_000)}m ${Math.floor((age % 60_000) / 1000)}s`;
+    }
+    function timestampCell(primary, secondary) {
+      const td = document.createElement("td"), main = document.createElement("span"), sub = document.createElement("span");
+      main.className = primary == null ? "datum-unavailable" : "datum-main"; main.textContent = primary == null ? "not reported" : ageText(primary);
+      sub.className = "datum-sub"; sub.textContent = secondary || ""; td.append(main, sub); return td;
+    }
+    function textPairCell(primary, secondary = "", unavailable = false) {
+      const td = document.createElement("td"), main = document.createElement("span"), sub = document.createElement("span");
+      main.className = unavailable ? "datum-unavailable" : "datum-main"; main.textContent = primary; sub.className = "datum-sub"; sub.textContent = secondary; td.append(main, sub); return td;
+    }
+    function previewSlot(slot) { return { slot: slot.slot, source_address: slot.source, follower_account_address: slot.follower, credential_profile_id: slot.credential_profile_id, multiplier: slot.multiplier, max_order_notional_usd: slot.max_order_notional_usd, max_gross_exposure_usd: slot.max_gross_exposure_usd, max_open_positions: slot.max_open_positions, max_leverage: slot.max_leverage, action_limit_per_minute: slot.action_limit_per_minute, enabled: slot.enabled === true }; }
+    function input(className, value, type = "text") { const el = document.createElement("input"); el.className = className; el.value = value ?? ""; el.type = type; el.required = true; el.disabled = status?.online === true; return el; }
+    function collect() { const rows = [...slotRows.querySelectorAll("tr[data-index]")]; if (!rows.length) return draft; draft = rows.map((row) => { const i = Number(row.dataset.index), old = draft[i]; return { slot: row.querySelector(".slot-id").value.trim().toLowerCase(), source_address: row.querySelector(".leader-input").value.trim().toLowerCase(), follower_account_address: old.follower_account_address, credential_profile_id: row.querySelector(".profile-select").value, multiplier: row.querySelector(".multiplier").value.trim(), max_order_notional_usd: row.querySelector(".order-cap").value.trim(), max_gross_exposure_usd: row.querySelector(".gross-cap").value.trim(), max_open_positions: Number(row.querySelector(".positions").value), max_leverage: Number(row.querySelector(".leverage").value), action_limit_per_minute: Number(row.querySelector(".actions").value), enabled: row.querySelector(".slot-enabled").checked }; }); return draft; }
+    function connectionHealthy(connection) {
+      const value = String(connection?.state || connection?.status || "").toLowerCase();
+      return ["connected", "healthy", "ok", "running", "ready"].includes(value);
+    }
+    function requiredConnection(runner) {
+      const candidates = ["source", "market", "action"].map((name) => {
+        const value = runner.connections?.[name];
+        if (!value || typeof value !== "object") return null;
+        return { ...value, name };
+      }).filter(Boolean);
+      const unhealthy = candidates.filter((item) => !connectionHealthy(item));
+      if (unhealthy.length) return unhealthy.sort((left, right) => number(right.outage_ms) - number(left.outage_ms))[0];
+      return candidates[0] || null;
+    }
+    function connectionValue(slotId, liveSlot, runner) {
+      const slotConnection = liveSlot.connectivity || liveSlot.connection || runner.connections?.slots?.[slotId];
+      if (typeof slotConnection === "string") return { state: slotConnection };
+      if (slotConnection && typeof slotConnection === "object") return slotConnection;
+      return requiredConnection(runner);
+    }
+    function stateTone(state, reason, enabled, dataStale) {
+      if (!enabled) return ["disabled", ""];
+      const value = String(state || "").toUpperCase();
+      if (value === "RUNNING" && dataStale !== true) return ["running", "ok"];
+      if (value === "RECOVERING" || value.includes("RECONNECT")) return ["reconnecting", "warn"];
+      if (value.includes("PAUSE") || value.includes("STOP") || value.includes("ERROR")) return [value.toLowerCase().replaceAll("_", " "), "bad"];
+      return [value ? value.toLowerCase().replaceAll("_", " ") : status?.online ? "starting" : "stopped", status?.online ? "warn" : ""];
+    }
+    function appendUnavailableRow(message) { const row = document.createElement("tr"), td = document.createElement("td"); td.colSpan = 8; td.className = "datum-unavailable"; td.textContent = message; row.appendChild(td); $("account-board-rows").appendChild(row); }
+    function renderAccountBoard() {
+      const rows = $("account-board-rows"), runner = status?.runner || {}, live = runner.slots || {}; rows.replaceChildren();
+      if (!draft.length) { appendUnavailableRow("No configured follower accounts were reported."); pill($("account-board-pill"), "no accounts", "warn"); return; }
+      let healthy = 0, degraded = 0;
+      for (const slot of draft) {
+        const liveSlot = live[slot.slot] || {}, [stateLabel, tone] = stateTone(liveSlot.state, liveSlot.reason, slot.enabled, liveSlot.data_stale), connection = connectionValue(slot.slot, liveSlot, runner);
+        if (tone === "ok" && connectionHealthy(connection)) healthy += 1; else if (slot.enabled) degraded += 1;
+        const tr = document.createElement("tr");
+        const identity = document.createElement("td"), name = document.createElement("span"), follower = document.createElement("span"); name.className = "account-id"; name.textContent = slot.slot; follower.className = "account-meta mono"; follower.textContent = `${slot.credential_profile_id} · ${shortAddress(slot.follower_account_address)}`; identity.append(name, follower);
+        const stateCell = document.createElement("td"), chip = document.createElement("span"), reason = document.createElement("span"); chip.className = `state-chip ${tone}`.trim(); chip.textContent = stateLabel; reason.className = "datum-sub"; reason.textContent = liveSlot.reason || (slot.enabled ? "no runtime reason reported" : "disabled in plan"); stateCell.append(chip, reason);
+        const connectionState = connection?.state || connection?.status || (status?.online ? null : "offline"), connectionAge = connection?.outage_ms ?? connection?.age_ms;
+        const connectionCell = textPairCell(connectionState || "not reported", connectionAge == null ? "" : `for ${ageText(connectionAge)}`, !connectionState);
+        const leaderEvent = liveSlot.latest_leader_event_ms ?? liveSlot.last_source_event_ms; const leaderCell = timestampCell(leaderEvent, liveSlot.latest_leader_market || liveSlot.action || "");
+        const ack = liveSlot.latest_ack_ms ?? liveSlot.last_ack_ms, latency = liveSlot.recent_latency_ms ?? liveSlot.copy_latency_ms, triggerAge = number(liveSlot.latest_trigger_age_ms), targetWait = number(liveSlot.latest_target_wait_ms), deviation = number(liveSlot.latest_price_deviation_bps), ackFacts = [];
+        if (latency != null) ackFacts.push(`${ageText(latency)} local copy`); else ackFacts.push("latency not reported");
+        if (liveSlot.latest_outcome) ackFacts.push(String(liveSlot.latest_outcome));
+        if (liveSlot.latest_execution_class) ackFacts.push(String(liveSlot.latest_execution_class).replaceAll("_", " "));
+        if (triggerAge !== null) ackFacts.push(`${ageText(triggerAge)} trigger age`);
+        if (targetWait !== null) ackFacts.push(`${ageText(targetWait)} accepted wait`);
+        if (deviation !== null) ackFacts.push(`${deviation.toFixed(2)} bps vs leader`);
+        const ackCell = timestampCell(ack, ackFacts.join(" · ")); if (liveSlot.latest_cloid) ackCell.title = `CLOID ${liveSlot.latest_cloid}`;
+        const queued = number(liveSlot.queued_actions ?? liveSlot.queued), retrying = number(liveSlot.retrying_actions ?? liveSlot.retrying), failed = number(liveSlot.failed_actions ?? liveSlot.failed); const hasWork = queued !== null || retrying !== null || failed !== null;
+        const workCell = textPairCell(hasWork ? `${queued ?? 0} queued · ${retrying ?? 0} retrying` : "not reported", failed === null ? "" : `${failed} failed`, !hasWork);
+        const market = liveSlot.market || liveSlot.action; const desired = liveSlot.desired_position, actual = liveSlot.actual_position; const positionText = desired == null && actual == null ? "position not reported" : `desired ${desired ?? "—"} · actual ${actual ?? "—"}`; const marketCell = textPairCell(market || "not reported", positionText, !market);
+        const sync = liveSlot.last_successful_sync_ms ?? liveSlot.latest_sync_ms ?? liveSlot.last_sync_ms; const syncCell = timestampCell(sync, ""); const actionable = liveSlot.latest_error || ((tone === "bad" || tone === "warn") ? liveSlot.reason : ""); if (actionable) { const error = document.createElement("span"); error.className = tone === "bad" ? "error-text" : "datum-sub"; error.textContent = actionable; syncCell.appendChild(error); }
+        const labeledCells = [["Account", identity], ["Operating state", stateCell], ["Connectivity", connectionCell], ["Latest leader event", leaderCell], ["Acknowledgement / latency", ackCell], ["Work", workCell], ["Market / position", marketCell], ["Synchronization / error", syncCell]];
+        for (const [label, td] of labeledCells) td.dataset.label = label;
+        tr.append(...labeledCells.map((item) => item[1])); rows.appendChild(tr);
+      }
+      pill($("account-board-pill"), `${healthy} healthy · ${degraded} degraded`, degraded ? "warn" : "ok");
+    }
+    function renderPlanTable() {
+      const live = status?.runner?.slots || {}; slotRows.replaceChildren();
+      draft.forEach((slot, index) => {
+        const row = document.createElement("tr"); row.dataset.index = String(index);
+        const name = document.createElement("td"), slotId = input("slot-id", slot.slot); slotId.pattern = "[a-z0-9][a-z0-9_-]{0,63}"; slotId.maxLength = 64; const enabledLabel = document.createElement("label"), enabled = document.createElement("input"); enabledLabel.className = "check"; enabled.className = "slot-enabled"; enabled.type = "checkbox"; enabled.checked = slot.enabled; enabled.disabled = status?.online === true; enabledLabel.append(enabled, document.createTextNode("Enabled")); name.append(slotId, enabledLabel);
+        const leaderCell = document.createElement("td"), leader = input("mono leader-input", slot.source_address); leader.pattern = "0x[0-9a-fA-F]{40}"; leader.maxLength = 42; leaderCell.appendChild(leader);
+        const profileCell = document.createElement("td"), select = document.createElement("select"), follower = document.createElement("div"); select.className = "profile-select"; select.disabled = status?.online === true; const ids = new Set(); for (const p of profiles) { ids.add(p.profile_id); const option = document.createElement("option"); option.value = p.profile_id; option.textContent = `${p.profile_id} — ${p.profile_label || "account"}`; select.appendChild(option); } if (!ids.has(slot.credential_profile_id)) { const option = document.createElement("option"); option.value = slot.credential_profile_id; option.textContent = `${slot.credential_profile_id} — missing`; select.appendChild(option); } select.value = slot.credential_profile_id; follower.className = "mono muted"; follower.textContent = shortAddress(slot.follower_account_address); select.addEventListener("change", () => { const p = profiles.find((item) => item.profile_id === select.value); if (p) { slot.credential_profile_id = p.profile_id; slot.follower_account_address = p.follower_account_address; slot.source_address = p.source_wallet; leader.value = p.source_wallet; follower.textContent = shortAddress(p.follower_account_address); } }); profileCell.append(select, follower);
+        const marketCell = document.createElement("td"), marketPolicy = document.createElement("span"); marketPolicy.className = "datum-main"; marketPolicy.textContent = "All active perp markets"; const marketPolicyDetail = document.createElement("span"); marketPolicyDetail.className = "datum-sub"; marketPolicyDetail.textContent = "Runtime readiness, collateral rules, and the profile denylist still apply"; marketCell.append(marketPolicy, marketPolicyDetail);
+        const riskCell = document.createElement("td"), risk = document.createElement("div"); risk.className = "risk-fields"; for (const [labelText, className, value, type] of [["Multiplier", "multiplier", slot.multiplier, "text"], ["Order USD", "order-cap", slot.max_order_notional_usd, "text"], ["Gross USD", "gross-cap", slot.max_gross_exposure_usd, "text"], ["Positions", "positions", slot.max_open_positions, "number"], ["Leverage", "leverage", slot.max_leverage, "number"], ["Actions/min", "actions", slot.action_limit_per_minute, "number"]]) { const label = document.createElement("label"), el = input(className, value, type); label.textContent = labelText; if (type === "number") el.min = "1"; label.appendChild(el); risk.appendChild(label); } riskCell.appendChild(risk);
+        const stateCell = document.createElement("td"), liveSlot = live[slot.slot] || {}, [label, tone] = stateTone(liveSlot.state, liveSlot.reason, slot.enabled), stateChip = document.createElement("span"), reason = document.createElement("div"); stateChip.className = `state-chip ${tone}`.trim(); stateChip.textContent = label; reason.className = "muted"; reason.textContent = liveSlot.reason || "—"; stateCell.append(stateChip, reason);
+        const removeCell = document.createElement("td"), remove = document.createElement("button"); remove.type = "button"; remove.className = "danger"; remove.textContent = "Remove"; remove.disabled = status?.online === true || draft.length <= 1; remove.addEventListener("click", () => { collect(); draft.splice(index, 1); renderPlanTable(); renderAccountBoard(); buttons(); }); removeCell.appendChild(remove);
+        row.append(name, leaderCell, profileCell, marketCell, riskCell, stateCell, removeCell); slotRows.appendChild(row);
+      });
+      $("slots-wrap").hidden = !draft.length; renderAccountBoard(); buttons();
+    }
+    function buttons() { const online = status?.online === true; $("save-fleet").disabled = busy || online || $("fleet-update-ack").value !== "UPDATE_FLEET"; $("add-slot").disabled = busy || online || draft.length >= 10; $("start-fleet").disabled = busy || online || !preview?.launchable || $("start-ack").value !== "LIVE_CONTINUOUS"; $("stop-fleet").disabled = busy || !online || $("stop-ack").value !== "STOP_CONTINUOUS"; }
+    function marketCoverage() { const enabled = draft.filter((slot) => slot.enabled); if (!marketSymbols?.length || !enabled.length) { $("market-coverage").textContent = "All-active profile policy"; return null; } $("market-coverage").textContent = `${marketSymbols.length} markets in the current active perp catalog; runtime eligibility is evaluated continuously and the catalog refreshes every five minutes`; return { covered: marketSymbols.length, total: marketSymbols.length, missing: [] }; }
+    async function loadMarketUniverse(network) { try { marketUniverse = await api(`/api/market-universe?network=${encodeURIComponent(network || "mainnet")}`); marketSymbols = marketUniverse.symbols || []; return marketCoverage(); } catch { marketUniverse = null; marketSymbols = null; $("market-coverage").textContent = "Market coverage unavailable"; return null; } }
+    function connectionSignals(payload, fetchError = null) {
+      if (fetchError) return [{ name: "runner status endpoint", state: "unreachable", outage_ms: Date.now() - (localOutageStarted || Date.now()) }];
+      const signals = [], runner = payload.runner || {}, connections = runner.connections;
+      if (!payload.online) signals.push({ name: "continuous runner", state: payload.status || "offline", outage_ms: runner.outage_ms });
+      else if (payload.stale) signals.push({ name: "runner heartbeat", state: "stale", outage_ms: payload.status_age_ms });
+      if (connections && typeof connections === "object") for (const [name, item] of Object.entries(connections)) {
+        if (name === "slots" || !item || typeof item !== "object") continue;
+        const state = String(item.state || item.status || "unknown").toLowerCase();
+        if (!["connected", "healthy", "ok", "running", "ready"].includes(state)) signals.push({ name, state, outage_ms: item.outage_ms ?? item.disconnected_ms ?? item.age_ms });
+      }
+      const slotConnections = connections?.slots;
+      if (slotConnections && typeof slotConnections === "object") for (const [slot, item] of Object.entries(slotConnections)) {
+        if (!item || typeof item !== "object") continue;
+        const state = String(item.state || item.status || "unknown").toLowerCase();
+        if (!["connected", "healthy", "ok", "running", "ready"].includes(state)) signals.push({ name: `${slot} follower`, state, outage_ms: item.outage_ms ?? item.disconnected_ms ?? item.age_ms });
+      }
+      return signals;
+    }
+    function alarmThreshold(payload) { return number(payload?.runner?.alarm_threshold_ms ?? payload?.runner?.prolonged_disconnect_threshold_ms ?? payload?.runner?.connection_siren_after_ms ?? payload?.connection_siren_after_ms) || 30000; }
+    function stopAlarmPulse() { if (alarmPulseTimer !== null) window.clearInterval(alarmPulseTimer); alarmPulseTimer = null; }
+    function pulseAlarm() {
+      if (!audioEnabled || alarmAcknowledged || !audioContext) return;
+      const now = audioContext.currentTime;
+      for (const [offset, frequency] of [[0, 540], [.17, 720]]) { const oscillator = audioContext.createOscillator(), gain = audioContext.createGain(); oscillator.type = "square"; oscillator.frequency.value = frequency; gain.gain.setValueAtTime(.0001, now + offset); gain.gain.exponentialRampToValueAtTime(.07, now + offset + .015); gain.gain.exponentialRampToValueAtTime(.0001, now + offset + .13); oscillator.connect(gain).connect(audioContext.destination); oscillator.start(now + offset); oscillator.stop(now + offset + .14); }
+    }
+    function startAlarmPulse() { if (alarmPulseTimer !== null || !audioEnabled || alarmAcknowledged) return; pulseAlarm(); alarmPulseTimer = window.setInterval(pulseAlarm, 5000); }
+    function updateAudioButton() { $("alarm-audio-toggle").textContent = audioEnabled ? "Alarm sound enabled" : "Enable alarm sound"; $("alarm-audio-toggle").setAttribute("aria-pressed", String(audioEnabled)); $("alarm-mute").textContent = audioEnabled ? "Mute sound" : "Sound muted"; }
+    function renderAlarm(signals, payload) {
+      const now = Date.now();
+      if (signals.length) {
+        stableRestoreStarted = null; if (localOutageStarted === null) localOutageStarted = now;
+        const reported = signals.map((item) => number(item.outage_ms)).filter((value) => value !== null); const outageMs = reported.length ? Math.max(...reported) : now - localOutageStarted; const prolonged = outageMs >= alarmThreshold(payload);
+        $("alarm-count").textContent = String(signals.length); pill(health, prolonged ? "prolonged disconnect" : "degraded", prolonged ? "bad" : "warn");
+        if (prolonged) {
+          $("disconnect-alarm").hidden = false; $("disconnect-alarm-title").textContent = alarmAcknowledged ? "Disconnect acknowledged" : "Prolonged disconnect";
+          $("disconnect-alarm-detail").textContent = `${signals.map((item) => `${item.name}: ${item.state}`).join("; ")} · ${ageText(outageMs)}`;
+          $("alarm-acknowledge").disabled = alarmAcknowledged; startAlarmPulse();
+        } else { $("disconnect-alarm").hidden = true; stopAlarmPulse(); }
+        return true;
+      }
+      $("alarm-count").textContent = "0"; stopAlarmPulse();
+      if (localOutageStarted !== null) {
+        if (stableRestoreStarted === null) stableRestoreStarted = now;
+        if (now - stableRestoreStarted < RESTORE_STABLE_MS) { pill(health, "restoring", "warn"); return true; }
+      }
+      localOutageStarted = null; stableRestoreStarted = null; alarmAcknowledged = false; $("disconnect-alarm").hidden = true; $("alarm-acknowledge").disabled = false;
+      return false;
+    }
+    function globalBacklog(runner) { const backlog = runner.backlog; if (backlog && typeof backlog === "object") { const values = Object.values(backlog).map(number).filter((value) => value !== null); return values.length ? values.reduce((sum, value) => sum + value, 0) : null; } return number(runner.source_queue_depth ?? runner.processing_backlog); }
+    function renderStatus(payload) {
+      status = payload; const runner = payload.runner || {}, slots = runner.slots || {}, rows = Object.entries(slots), healthyCount = rows.filter(([slotId, item]) => item && item.state === "RUNNING" && item.data_stale !== true && connectionHealthy(connectionValue(slotId, item, runner))).length, reported = payload.reported_slots || rows.length;
+      $("runner-state").textContent = String(payload.status || "unknown").toUpperCase(); $("status-age").textContent = payload.status_age_ms == null ? "not reported" : ageText(payload.status_age_ms); $("ready-slots").textContent = `${healthyCount} healthy / ${reported}`; $("execution-state").textContent = payload.execution_enabled ? "ARMED" : "off";
+      $("run-generation").textContent = payload.generation || "none"; $("run-generation").title = payload.state_dir || ""; $("followers-flat").textContent = typeof runner.followers_flat === "boolean" ? (runner.followers_flat ? "yes" : "no") : "not reported";
+      const connections = runner.connections || {}, source = connections.source; $("leader-feed-state").textContent = source?.state || source?.status || (payload.online && !payload.stale ? "not reported" : payload.status || "offline");
+      const backlog = globalBacklog(runner); $("backlog-count").textContent = backlog == null ? "not reported" : String(backlog);
+      const metricDrops = number(runner.metrics_dropped); $("diagnostics-state").textContent = metricDrops === null ? "not reported" : metricDrops === 0 ? "recording" : `${metricDrops} dropped`; $("diagnostics-state").className = metricDrops !== null && metricDrops > 0 ? "negative" : "";
+      const signals = connectionSignals(payload), alarmActive = renderAlarm(signals, payload);
+      if (!signals.length && !alarmActive) { if (payload.healthy) pill(health, "fleet healthy", "ok"); else if (payload.online) pill(health, payload.status || "running", "warn"); else pill(health, payload.status || "stopped"); }
+      if (!payload.online && runner.error) notice(actionNotice, `Runner stopped: ${runner.error_type || "Error"}: ${runner.error}`, "bad");
+      renderPlanTable();
+    }
+    async function loadProfiles() { try { const payload = await api("/api/credential-profiles"); profiles = payload.profiles || []; renderPlanTable(); } catch (error) { notice(planNotice, `Account profiles unavailable: ${error}`, "bad"); } }
+    async function inspect() {
+      busy = true; buttons();
+      try {
+        await loadProfiles(); preview = await api("/api/continuous/preview", { method: "POST", body: "{}" }); const plan = preview.plan; if (!plan) throw new Error((preview.blockers || []).join("; ") || "Plan unavailable");
+        draft = (plan.slots || []).map(previewSlot); $("combined-cap").value = plan.max_combined_gross_usd; const coverage = await loadMarketUniverse(plan.network);
+        pill(planPill, preview.launchable ? `${draft.length} accounts ready` : "blocked", preview.launchable ? "ok" : "bad");
+        notice(planNotice, !preview.launchable ? (preview.blockers || []).join("; ") : `Plan ${plan.runtime_id} is launchable with profile-owned all-active market eligibility${coverage?.total ? ` across the current ${coverage.total}-market active perp catalog` : ""}. Runtime readiness, collateral rules, and the profile denylist are applied before any order.`, !preview.launchable ? "bad" : "");
+        $("path-details").textContent = JSON.stringify({ plan: plan.path, plan_sha256: plan.sha256, runner: preview.runner, engine_state_dir: preview.engine_state_dir, recovery_rest_enabled: preview.recovery_rest_enabled, market_policy: "all_active_markets_plus_profile_denylist", current_catalog_sha256: marketUniverse?.sha256, current_catalog_markets: marketSymbols?.length }, null, 2);
+        renderStatus(preview.current || status || {});
+      } catch (error) { pill(planPill, "inspection failed", "bad"); notice(planNotice, String(error), "bad"); }
+      finally { busy = false; buttons(); }
+    }
+    async function addSlot() { collect(); const used = new Set(draft.map((slot) => slot.credential_profile_id)), profile = profiles.find((item) => item.configured && !used.has(item.profile_id)); if (!profile) { notice(planNotice, profiles.length >= 10 ? "All saved profiles are already in this plan." : "Save another fleet account below, then add it here.", "bad"); return; } const base = draft[0] || {}; draft.push({ slot: profile.profile_id, source_address: profile.source_wallet, follower_account_address: profile.follower_account_address, credential_profile_id: profile.profile_id, multiplier: base.multiplier || "0.75", max_order_notional_usd: base.max_order_notional_usd || "2500", max_gross_exposure_usd: base.max_gross_exposure_usd || "2500", max_open_positions: base.max_open_positions || 4, max_leverage: base.max_leverage || 1, action_limit_per_minute: base.action_limit_per_minute || 6, enabled: true }); renderPlanTable(); notice(planNotice, `Added ${profile.profile_id} with its all-active profile policy. Save fleet to persist.`); }
+    async function save() { collect(); const controls = [...slotRows.querySelectorAll("input,select")]; if (controls.some((el) => !el.reportValidity())) return; busy = true; buttons(); try { preview = await api("/api/continuous/plan", { method: "POST", body: JSON.stringify({ slots: draft, max_combined_gross_usd: $("combined-cap").value.trim(), acknowledgement: $("fleet-update-ack").value }) }); $("fleet-update-ack").value = ""; draft = (preview.plan.slots || []).map(previewSlot); marketCoverage(); pill(planPill, `${draft.length} accounts ready`, "ok"); notice(planNotice, `Fleet saved with durable runtime identity ${preview.plan.runtime_id}.`); renderStatus(preview.current || {}); } catch (error) { notice(planNotice, String(error), "bad"); } finally { busy = false; buttons(); } }
+    async function refreshStatus() { try { renderStatus(await api("/api/continuous/status")); } catch (error) { pill(health, "status unavailable", "bad"); notice(actionNotice, String(error), "bad"); if (localOutageStarted === null) localOutageStarted = Date.now(); renderAlarm(connectionSignals({}, error), status || {}); } }
+    async function control(url, ack, success) { busy = true; buttons(); try { renderStatus(await api(url, { method: "POST", body: JSON.stringify({ acknowledgement: ack }) })); notice(actionNotice, success); } catch (error) { notice(actionNotice, String(error), "bad"); } finally { busy = false; buttons(); } }
+    async function toggleAudio() { try { if (!audioContext) { const AudioContextClass = window.AudioContext || window.webkitAudioContext; if (!AudioContextClass) throw new Error("Web Audio is unavailable"); audioContext = new AudioContextClass(); } if (audioContext.state === "suspended") await audioContext.resume(); audioEnabled = !audioEnabled; if (!audioEnabled) stopAlarmPulse(); else if (!$("disconnect-alarm").hidden && !alarmAcknowledged) startAlarmPulse(); } catch (error) { audioEnabled = false; notice(actionNotice, `Alarm sound unavailable: ${error}`, "warn"); } updateAudioButton(); }
+    $("inspect-plan").addEventListener("click", inspect); $("refresh-status").addEventListener("click", refreshStatus); $("add-slot").addEventListener("click", addSlot); $("save-fleet").addEventListener("click", save);
+    $("start-fleet").addEventListener("click", () => control("/api/continuous/start", $("start-ack").value, "Fleet start requested. Waiting for heartbeat.")); $("stop-fleet").addEventListener("click", () => control("/api/continuous/stop", $("stop-ack").value, "Graceful stop requested."));
+    for (const id of ["fleet-update-ack", "start-ack", "stop-ack"]) $(id).addEventListener("input", buttons);
+    $("alarm-audio-toggle").addEventListener("click", toggleAudio); $("alarm-mute").addEventListener("click", () => { audioEnabled = false; stopAlarmPulse(); updateAudioButton(); }); $("alarm-acknowledge").addEventListener("click", () => { alarmAcknowledged = true; stopAlarmPulse(); $("alarm-acknowledge").disabled = true; $("disconnect-alarm-title").textContent = "Disconnect acknowledged"; });
+    window.addEventListener("fleet-profiles-loaded", (event) => { profiles = event.detail || []; renderPlanTable(); });
+    updateAudioButton(); refreshStatus(); inspect(); window.setInterval(refreshStatus,10000);
+  })();
+  </script>
+  {% endif %}
+</body>
+</html>

@@ -1,0 +1,78 @@
+[build-system]
+requires = ["setuptools>=70", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hyperliquid-copytrader"
+version = "0.1.0"
+description = "Continuous WebSocket-first Hyperliquid copy trader for native Windows."
+readme = "README.md"
+requires-python = ">=3.11,<3.15"
+license = "MIT"
+authors = [{ name = "Local operator" }]
+dependencies = [
+  "coincurve==19.0.1",
+  "fastapi>=0.110",
+  "hyperliquid-python-sdk>=0.24",
+  "jinja2>=3.1",
+  "pydantic>=2",
+  "python-dotenv>=1",
+  "python-multipart>=0.0.9",
+  "typer>=0.12",
+  "uvicorn>=0.30",
+  "websockets>=16,<17",
+]
+
+[project.optional-dependencies]
+test = [
+  "httpx2>=2",
+  "pytest>=8",
+  "pytest-asyncio>=0.23",
+]
+dev = [
+  "build==1.5.0",
+  "coverage[toml]>=7.6",
+  "httpx2>=2",
+  "mypy>=1.11",
+  "pip-audit>=2.7",
+  "pip-tools==7.5.2",
+  "pytest>=8",
+  "pytest-asyncio>=0.23",
+  "ruff>=0.6",
+  "twine>=5",
+]
+
+[project.scripts]
+hl-copytrader = "hyperliquid_copytrader.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+hyperliquid_copytrader = ["web/templates/*.html"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["src/hyperliquid_copytrader"]
+
+[tool.coverage.report]
+fail_under = 70
+show_missing = true
+skip_covered = true
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+warn_unused_configs = true
+no_strict_optional = false
+check_untyped_defs = true

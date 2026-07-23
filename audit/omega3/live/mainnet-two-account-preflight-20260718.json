@@ -1,0 +1,358 @@
+{
+  "blockers": [],
+  "network": "mainnet",
+  "network_explicit": true,
+  "observed_ms": 1784400764423,
+  "passed": true,
+  "plan_network": "mainnet",
+  "plan_sha256": "05ffa0b55573523f611a478b8234d4cd2d9d1d38c86ecbcfc9ffffb2003769f9",
+  "require_flat_and_order_free": true,
+  "rest_requests": {
+    "by_slot": {
+      "acc1": {
+        "by_type": {
+          "clearinghouseState": 11,
+          "extraAgents": 1,
+          "openOrders": 10,
+          "spotClearinghouseState": 2,
+          "userAbstraction": 2,
+          "userRole": 2
+        },
+        "total": 28
+      },
+      "acc7": {
+        "by_type": {
+          "clearinghouseState": 11,
+          "extraAgents": 1,
+          "openOrders": 10,
+          "spotClearinghouseState": 2,
+          "userAbstraction": 2,
+          "userRole": 2
+        },
+        "total": 28
+      }
+    },
+    "by_type": {
+      "clearinghouseState": 22,
+      "extraAgents": 2,
+      "openOrders": 20,
+      "spotClearinghouseState": 4,
+      "userAbstraction": 4,
+      "userRole": 4
+    },
+    "total": 56
+  },
+  "slots": [
+    {
+      "blockers": [],
+      "collateral": {
+        "follower": {
+          "available": "51.621827",
+          "coin": "USDC",
+          "hold": "0.0",
+          "token": 0,
+          "total": "51.621827",
+          "valid": true
+        },
+        "source": {
+          "available": "4843.7907721",
+          "coin": "USDC",
+          "hold": "11755.051006",
+          "token": 0,
+          "total": "16598.8417781",
+          "valid": true
+        }
+      },
+      "follower": "0x7d4528...6e6bbb",
+      "follower_dexes": [
+        "",
+        "abcd",
+        "cash",
+        "flx",
+        "hyna",
+        "km",
+        "mkts",
+        "para",
+        "vntl",
+        "xyz"
+      ],
+      "follower_nonflat": false,
+      "follower_open_order_count": 0,
+      "identity": {
+        "action_principal": "0xf6103b...85f15f",
+        "expected_account_mode": "unified",
+        "follower_account_mode": "unified",
+        "follower_role": "subaccount",
+        "global_account": "0xf6103b...85f15f",
+        "signer_authorized": true,
+        "signer_owner": "0xf6103b...85f15f",
+        "signer_role": "agent",
+        "signer_valid_until_ms": 1799349913689,
+        "signing_vault_address": "0x7d4528...6e6bbb",
+        "source_account_mode": "unified",
+        "source_equity_basis": "unified_spot_token0_usdc_total",
+        "source_role": "not_queried"
+      },
+      "open_orders": {
+        "follower": {
+          "": {
+            "count": 0,
+            "markets": []
+          },
+          "abcd": {
+            "count": 0,
+            "markets": []
+          },
+          "cash": {
+            "count": 0,
+            "markets": []
+          },
+          "flx": {
+            "count": 0,
+            "markets": []
+          },
+          "hyna": {
+            "count": 0,
+            "markets": []
+          },
+          "km": {
+            "count": 0,
+            "markets": []
+          },
+          "mkts": {
+            "count": 0,
+            "markets": []
+          },
+          "para": {
+            "count": 0,
+            "markets": []
+          },
+          "vntl": {
+            "count": 0,
+            "markets": []
+          },
+          "xyz": {
+            "count": 0,
+            "markets": []
+          }
+        }
+      },
+      "passed": true,
+      "positions": {
+        "follower": {
+          "": {
+            "count": 0,
+            "markets": []
+          },
+          "abcd": {
+            "count": 0,
+            "markets": []
+          },
+          "cash": {
+            "count": 0,
+            "markets": []
+          },
+          "flx": {
+            "count": 0,
+            "markets": []
+          },
+          "hyna": {
+            "count": 0,
+            "markets": []
+          },
+          "km": {
+            "count": 0,
+            "markets": []
+          },
+          "mkts": {
+            "count": 0,
+            "markets": []
+          },
+          "para": {
+            "count": 0,
+            "markets": []
+          },
+          "vntl": {
+            "count": 0,
+            "markets": []
+          },
+          "xyz": {
+            "count": 0,
+            "markets": []
+          }
+        },
+        "source": {
+          "xyz": {
+            "count": 5,
+            "markets": [
+              "xyz:EWY",
+              "xyz:MU",
+              "xyz:SKHX",
+              "xyz:SKHY",
+              "xyz:SMSN"
+            ]
+          }
+        }
+      },
+      "signer": "0x78eed0...ac7a92",
+      "slot": "acc7",
+      "source": "0x8360ca...251590",
+      "source_dexes": [
+        "xyz"
+      ]
+    },
+    {
+      "blockers": [],
+      "collateral": {
+        "follower": {
+          "available": "52.920071",
+          "coin": "USDC",
+          "hold": "0.0",
+          "token": 0,
+          "total": "52.920071",
+          "valid": true
+        },
+        "source": {
+          "available": "48593.88458496",
+          "coin": "USDC",
+          "hold": "1783.665604",
+          "token": 0,
+          "total": "50377.55018896",
+          "valid": true
+        }
+      },
+      "follower": "0x5c17da...913287",
+      "follower_dexes": [
+        "",
+        "abcd",
+        "cash",
+        "flx",
+        "hyna",
+        "km",
+        "mkts",
+        "para",
+        "vntl",
+        "xyz"
+      ],
+      "follower_nonflat": false,
+      "follower_open_order_count": 0,
+      "identity": {
+        "action_principal": "0xf6103b...85f15f",
+        "expected_account_mode": "unified",
+        "follower_account_mode": "unified",
+        "follower_role": "subaccount",
+        "global_account": "0xf6103b...85f15f",
+        "signer_authorized": true,
+        "signer_owner": "0xf6103b...85f15f",
+        "signer_role": "agent",
+        "signer_valid_until_ms": 1799524677596,
+        "signing_vault_address": "0x5c17da...913287",
+        "source_account_mode": "unified",
+        "source_equity_basis": "unified_spot_token0_usdc_total",
+        "source_role": "not_queried"
+      },
+      "open_orders": {
+        "follower": {
+          "": {
+            "count": 0,
+            "markets": []
+          },
+          "abcd": {
+            "count": 0,
+            "markets": []
+          },
+          "cash": {
+            "count": 0,
+            "markets": []
+          },
+          "flx": {
+            "count": 0,
+            "markets": []
+          },
+          "hyna": {
+            "count": 0,
+            "markets": []
+          },
+          "km": {
+            "count": 0,
+            "markets": []
+          },
+          "mkts": {
+            "count": 0,
+            "markets": []
+          },
+          "para": {
+            "count": 0,
+            "markets": []
+          },
+          "vntl": {
+            "count": 0,
+            "markets": []
+          },
+          "xyz": {
+            "count": 0,
+            "markets": []
+          }
+        }
+      },
+      "passed": true,
+      "positions": {
+        "follower": {
+          "": {
+            "count": 0,
+            "markets": []
+          },
+          "abcd": {
+            "count": 0,
+            "markets": []
+          },
+          "cash": {
+            "count": 0,
+            "markets": []
+          },
+          "flx": {
+            "count": 0,
+            "markets": []
+          },
+          "hyna": {
+            "count": 0,
+            "markets": []
+          },
+          "km": {
+            "count": 0,
+            "markets": []
+          },
+          "mkts": {
+            "count": 0,
+            "markets": []
+          },
+          "para": {
+            "count": 0,
+            "markets": []
+          },
+          "vntl": {
+            "count": 0,
+            "markets": []
+          },
+          "xyz": {
+            "count": 0,
+            "markets": []
+          }
+        },
+        "source": {
+          "": {
+            "count": 0,
+            "markets": []
+          }
+        }
+      },
+      "signer": "0x721ed3...380777",
+      "slot": "acc1",
+      "source": "0xb10398...c41343",
+      "source_dexes": [
+        ""
+      ]
+    }
+  ],
+  "version": 1
+}

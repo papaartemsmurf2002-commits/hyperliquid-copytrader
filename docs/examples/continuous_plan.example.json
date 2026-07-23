@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "runtime_id": "local-continuous-v1",
+  "network": "mainnet",
+  "startup_baseline_only": true,
+  "max_combined_gross_usd": "50",
+  "slots": [
+    {
+      "slot": "slot1",
+      "enabled": true,
+      "credential_profile_id": "slot1",
+      "source_address": "0x1111111111111111111111111111111111111111",
+      "follower_account_address": "0x2222222222222222222222222222222222222222",
+      "multiplier": "0.01",
+      "max_order_notional_usd": "15",
+      "max_gross_exposure_usd": "25",
+      "max_leverage": 1,
+      "max_open_positions": 1,
+      "action_limit_per_minute": 4
+    },
+    {
+      "slot": "slot2",
+      "enabled": true,
+      "credential_profile_id": "slot2",
+      "source_address": "0x3333333333333333333333333333333333333333",
+      "follower_account_address": "0x4444444444444444444444444444444444444444",
+      "multiplier": "0.01",
+      "max_order_notional_usd": "15",
+      "max_gross_exposure_usd": "25",
+      "max_leverage": 1,
+      "max_open_positions": 1,
+      "action_limit_per_minute": 4
+    }
+  ]
+}

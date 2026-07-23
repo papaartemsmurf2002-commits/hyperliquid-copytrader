@@ -1,0 +1,15 @@
+{
+  "context_fixture": "offline-context-fixture.json",
+  "context_fixture_sha256": "dbd84754d9479fdc30141ec07fad93af1e56cf696e2dede444e0a586fd45e821",
+  "detailed_sqlite": "native-windows-offline-production-path.sqlite3",
+  "detailed_sqlite_sha256": "6ad3b33897b7d5da729ea281eb25b1edefa7147eb7aefcdbddd8df954030a105",
+  "exchange_actions_sent": false,
+  "operator_credentials_read": false,
+  "passed_internal_compute_gates": false,
+  "release_gate_evidence": false,
+  "result": "native-windows-offline-production-path.json",
+  "result_sha256": "380fc582ba8b6f85002fbb45d9477ed8aa7ced076d7e5b41cb11bb54b107339a",
+  "runtime_root": "C:\\Users\\papaa\\AppData\\Local\\hlct-omega3-offline-benchmark-20260717T134549Z",
+  "schema_version": 1,
+  "scope": "native Windows local compute only; network and exchange excluded"
+}

@@ -1,0 +1,158 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Quality / Ubuntu / Python 3.11
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements/ci-lock.txt
+
+      - name: Install locked dependencies and package
+        run: |
+          python -m pip install --require-hashes -r requirements/ci-lock.txt
+          python -m pip install --no-deps --no-build-isolation -e .
+
+      - name: Verify console script
+        run: hl-copytrader --help
+
+      - name: Compile sources, scripts, and tests
+        run: python -m compileall -q src scripts tests
+
+      - name: Run tests with branch coverage
+        run: python -m coverage run -m pytest --strict-config --strict-markers
+
+      - name: Enforce coverage threshold
+        run: |
+          python -m coverage report
+          python -m coverage json -o coverage.json
+          python scripts/check_critical_coverage.py coverage.json
+
+      - name: Run Ruff
+        run: python -m ruff check .
+
+      - name: Check Ruff formatting
+        run: python -m ruff format --check src scripts tests
+
+      - name: Type-check sources, operational scripts, and tests
+        run: |
+          python -m mypy --check-untyped-defs src scripts
+          python -m mypy --check-untyped-defs tests
+
+      - name: Build distributions with locked build tools
+        run: python -m build --no-isolation
+
+      - name: Validate distributions
+        run: python -m twine check dist/*
+
+      - name: Verify release artifact contents
+        run: python scripts/verify_release_artifacts.py dist
+
+      - name: Smoke-test built wheel
+        run: |
+          python -m venv .wheel-smoke
+          .wheel-smoke/bin/python -m pip install dist/*.whl
+          (cd "$(mktemp -d)" && "$GITHUB_WORKSPACE/.wheel-smoke/bin/hl-copytrader" --help)
+          (cd "$(mktemp -d)" && "$GITHUB_WORKSPACE/.wheel-smoke/bin/python" -c "import hyperliquid_copytrader.continuous_runtime")
+          .wheel-smoke/bin/python -m pip check
+
+      - name: Check installed dependencies
+        run: python -m pip check
+
+      - name: Audit project dependencies
+        run: python -m pip_audit --disable-pip --require-hashes -r requirements/ci-lock.txt
+
+  compatibility:
+    name: ${{ matrix.os }} / Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: requirements/ci-lock.txt
+
+      - name: Install locked dependencies and package
+        run: |
+          python -m pip install --require-hashes -r requirements/ci-lock.txt
+          python -m pip install --no-deps --no-build-isolation -e .
+
+      - name: Verify console script
+        run: hl-copytrader --help
+
+      - name: Compile sources, scripts, and tests
+        run: python -m compileall -q src scripts tests
+
+      - name: Parse Windows PowerShell entrypoints
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Get-ChildItem scripts -Filter *.ps1 | ForEach-Object {
+            $tokens = $null
+            $parseErrors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile(
+              $_.FullName,
+              [ref]$tokens,
+              [ref]$parseErrors
+            ) | Out-Null
+            if ($parseErrors.Count -gt 0) {
+              $parseErrors | ForEach-Object {
+                Write-Error "$($_.Extent.File):$($_.Extent.StartLineNumber): $($_.Message)"
+              }
+              exit 1
+            }
+          }
+
+      - name: Run tests
+        run: python -m pytest --strict-config --strict-markers
+
+      - name: Check installed dependencies
+        run: python -m pip check
+
+      - name: Build and smoke-test installed wheel on Windows
+        shell: pwsh
+        run: |
+          python -m build --wheel --no-isolation --outdir compatibility-dist
+          python -m venv .wheel-smoke
+          $wheel = Get-ChildItem compatibility-dist -Filter *.whl -File -ErrorAction Stop
+          if ($wheel.Count -ne 1) { throw "expected exactly one compatibility wheel" }
+          & .\.wheel-smoke\Scripts\python.exe -m pip install $wheel[0].FullName
+          Push-Location $env:RUNNER_TEMP
+          try {
+            & "$env:GITHUB_WORKSPACE\.wheel-smoke\Scripts\hl-copytrader.exe" --help
+            & "$env:GITHUB_WORKSPACE\.wheel-smoke\Scripts\python.exe" -c "import hyperliquid_copytrader.continuous_runtime"
+            & "$env:GITHUB_WORKSPACE\.wheel-smoke\Scripts\python.exe" -m pip check
+          } finally {
+            Pop-Location
+          }

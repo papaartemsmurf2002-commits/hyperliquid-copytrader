@@ -1,0 +1,69 @@
+{
+  "environment": "shadow",
+  "notes": "Read-only example plan for replay/shadow validation. Dummy subaccount addresses are intentionally disabled and unverified.",
+  "slots": [
+    {
+      "allowed_coins": [
+        "BTC",
+        "ETH",
+        "SOL"
+      ],
+      "denied_coins": [],
+      "dust_policy": {
+        "mode": "accumulate",
+        "stale_after_ms": 300000
+      },
+      "enabled": false,
+      "entry_slippage_bps": "20",
+      "equity_confidence_policy": "block_low",
+      "expected_account_mode": "standard",
+      "expected_margin_mode": "cross",
+      "fixed_risk_budget_usd": null,
+      "initial_budget_usd": "50",
+      "max_emergency_leverage": "10",
+      "max_gross_notional_usd": "500",
+      "min_notional_usd": "10",
+      "mode": "shadow",
+      "note": "TWAP-heavy recorded source used by replay artifacts.",
+      "operator_verified_at": null,
+      "reduce_only_slippage_bps": "300",
+      "sizing_policy": "pure_compound",
+      "source_dex_scope": "strict",
+      "slot": "slot-01",
+      "source_address": "0x7c930969fcf3e5a5c78bcf2e1cefda3f53e3c8fd",
+      "subaccount_address": "0xf000000000000000000000000000000000000001",
+      "subaccount_verified": false
+    },
+    {
+      "allowed_coins": [],
+      "denied_coins": [
+        "PURR"
+      ],
+      "dust_policy": {
+        "mode": "accumulate",
+        "stale_after_ms": 300000
+      },
+      "enabled": false,
+      "entry_slippage_bps": "20",
+      "equity_confidence_policy": "block_low",
+      "expected_account_mode": "standard",
+      "expected_margin_mode": "cross",
+      "fixed_risk_budget_usd": "50",
+      "initial_budget_usd": "50",
+      "max_emergency_leverage": "10",
+      "max_gross_notional_usd": "500",
+      "min_notional_usd": "10",
+      "mode": "shadow",
+      "note": "Fixed-risk-budget comparison slot template.",
+      "operator_verified_at": null,
+      "reduce_only_slippage_bps": "300",
+      "sizing_policy": "fixed_risk_budget",
+      "source_dex_scope": "strict",
+      "slot": "slot-02",
+      "source_address": "0x1111111111111111111111111111111111111111",
+      "subaccount_address": "0xf000000000000000000000000000000000000002",
+      "subaccount_verified": false
+    }
+  ],
+  "version": 1
+}
