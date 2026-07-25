@@ -2,6 +2,9 @@
 
 This directory preserves the latest authoritative continuous-run evidence available on 2026-07-25. It records a real production failure and its separately authorized recovery. It is not a production-readiness certificate.
 
+The detailed, code-linked implementation sequence is in
+[`IMPLEMENTATION_HANDOFF.md`](IMPLEMENTATION_HANDOFF.md).
+
 The two raw `metrics.jsonl` streams are committed as lossless gzip-compressed tar archives. Compression is required because the failed-run stream is 137 MB uncompressed, above GitHub's normal 100 MB per-file limit. Mutable SQLite databases and account configuration remain local. `evidence-manifest.json` records the sizes and SHA-256 hashes of both the original streams and their archives.
 
 ## Raw metrics
