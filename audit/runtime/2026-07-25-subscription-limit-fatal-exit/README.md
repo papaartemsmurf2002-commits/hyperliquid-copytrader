@@ -2,7 +2,28 @@
 
 This directory preserves the latest authoritative continuous-run evidence available on 2026-07-25. It records a real production failure and its separately authorized recovery. It is not a production-readiness certificate.
 
-Raw runtime files remain under `%LOCALAPPDATA%\HyperliquidCopytrader\runtime` and are not committed because they include a 137 MB metrics stream, mutable SQLite databases, local paths, and account configuration metadata. `evidence-manifest.json` records their sizes and SHA-256 hashes. The committed JSON files contain only the evidence needed to review the incident.
+The two raw `metrics.jsonl` streams are committed as lossless gzip-compressed tar archives. Compression is required because the failed-run stream is 137 MB uncompressed, above GitHub's normal 100 MB per-file limit. Mutable SQLite databases and account configuration remain local. `evidence-manifest.json` records the sizes and SHA-256 hashes of both the original streams and their archives.
+
+## Raw metrics
+
+- `failed-run-metrics.jsonl.tar.gz`
+  - Original bytes: 137,776,790
+  - Original SHA-256: `d641e0c298dcc1c068e265150f4b97e3be7666f9f31f9f881d3f97c314a58a5d`
+  - Archive bytes: 14,207,250
+  - Archive SHA-256: `0106a9b82a074a825e0e85aa2632d6e233c6c4a6566d7ddaf83a47749769b9d9`
+- `recovery-run-metrics.jsonl.tar.gz`
+  - Original bytes: 50,113
+  - Original SHA-256: `fe3d0637f9d7e786857f5bdb429b6ac3249968e7239febbed04503f573026053`
+  - Archive bytes: 6,810
+  - Archive SHA-256: `1369838c5f074bdabddee2bd6d597cb76db525a8d32ef59b1dda934bb51df99c`
+
+Each archive contains one file named `metrics.jsonl`. Extract with:
+
+```powershell
+tar -xzf failed-run-metrics.jsonl.tar.gz
+```
+
+Before publication, both streams were scanned for sensitive field names, known API-token signatures, PEM private-key blocks, 64-hex private-key-like values, and `.secrets` paths. No matches were found. Decompression was then verified to reproduce the original byte counts and SHA-256 hashes above.
 
 ## Failed generation
 
