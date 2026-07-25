@@ -1,0 +1,51 @@
+name: Agent repository export
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+
+      - name: Build complete tracked-file snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          git ls-files -z | tar --null --files-from=- -czf repository-snapshot.tar.gz
+          python - <<'PY'
+          from __future__ import annotations
+          import hashlib
+          from pathlib import Path
+          import subprocess
+
+          paths = subprocess.check_output(["git", "ls-files", "-z"]).decode().split("\0")
+          rows = ["path\tbytes\tlines\tsha256"]
+          for raw in paths:
+              if not raw:
+                  continue
+              path = Path(raw)
+              data = path.read_bytes()
+              lines = data.count(b"\n") + (1 if data and not data.endswith(b"\n") else 0)
+              rows.append(f"{raw}\t{len(data)}\t{lines}\t{hashlib.sha256(data).hexdigest()}")
+          Path("repository-inventory.tsv").write_text("\n".join(rows) + "\n", encoding="utf-8")
+          PY
+
+      - name: Upload complete repository snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-repository-snapshot
+          path: |
+            repository-snapshot.tar.gz
+            repository-inventory.tsv
+          if-no-files-found: error
+          retention-days: 1
