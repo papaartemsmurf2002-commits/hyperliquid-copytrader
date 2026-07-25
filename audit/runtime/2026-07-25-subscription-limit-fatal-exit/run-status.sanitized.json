@@ -1,0 +1,46 @@
+{
+  "failed_run": {
+    "generation": "continuous-1784746437424-619587a1",
+    "started_ms": 1784746437933,
+    "stopped_ms": 1784938446231,
+    "status": "error",
+    "error_type": "FatalContinuousNetworkError",
+    "error": "market subscription error: Cannot subscribe to more than 1000 channels.",
+    "execution_enabled": false,
+    "followers_flat": false,
+    "metrics_dropped": 0,
+    "startup_http_logical_requests": 3,
+    "startup_http_requests": 3,
+    "startup_http_weight": 60,
+    "slot_state_counts": {
+      "RUNNING": 3,
+      "RECOVERING": 7
+    }
+  },
+  "recovery_run": {
+    "generation": "continuous-1784963558188-649d95b0",
+    "started_ms": 1784963558822,
+    "stopped_ms": 1784963697173,
+    "status": "stopped",
+    "error": null,
+    "execution_enabled": false,
+    "followers_flat": true,
+    "metrics_dropped": 0,
+    "monitoring_dropped": 0,
+    "startup_http_logical_requests": 3,
+    "startup_http_requests": 3,
+    "startup_http_weight": 60,
+    "slot_count": 10,
+    "final_connection_states": {
+      "action": "connected",
+      "market": "connected",
+      "source": "connected"
+    },
+    "reported_final_backlog": {
+      "action": 6,
+      "recovery": 0,
+      "source": 0
+    },
+    "reported_backlog_note": "The action count was stale: all tasks were dead, all journals were terminal, and authoritative follower truth was flat."
+  }
+}

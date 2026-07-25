@@ -1,0 +1,103 @@
+{
+  "captured_at": "2026-07-25",
+  "raw_artifacts_committed": false,
+  "reason": "Raw runtime artifacts contain mutable databases, local paths, account configuration metadata, and a 137 MB metrics stream. This manifest preserves identity without publishing those files.",
+  "artifacts": [
+    {
+      "source": "failed-run",
+      "name": "status.json",
+      "bytes": 1638,
+      "sha256": "9f11a984796532b4d33353a61285859ef8359d675079fa6f03a73868120ff340"
+    },
+    {
+      "source": "failed-run",
+      "name": "metrics.jsonl",
+      "bytes": 137776790,
+      "sha256": "d641e0c298dcc1c068e265150f4b97e3be7666f9f31f9f881d3f97c314a58a5d"
+    },
+    {
+      "source": "failed-run",
+      "name": "closure-summary.md",
+      "bytes": 3797,
+      "sha256": "fe07d788b62373cccf29c00853a7d14ba3e84e1147f311b5f8e56e452a949551"
+    },
+    {
+      "source": "failed-run",
+      "name": "operator-interventions.md",
+      "bytes": 1677,
+      "sha256": "cb466e3fa1824cd6daf2220467d1395a55a0cd3b5c2c9fcef3891a5d160a5da2"
+    },
+    {
+      "source": "recovery-run",
+      "name": "status.json",
+      "bytes": 2255,
+      "sha256": "0210ff059e651d3ae5efb6693f8f70ec9a3db252c0a08240b77ea6e4c62f78d7"
+    },
+    {
+      "source": "recovery-run",
+      "name": "metrics.jsonl",
+      "bytes": 50113,
+      "sha256": "fe3d0637f9d7e786857f5bdb429b6ac3249968e7239febbed04503f573026053"
+    },
+    {
+      "source": "action-journal",
+      "name": "acc1.sqlite3",
+      "bytes": 61440,
+      "sha256": "454407a66ebd74ce161104b8d085c0181f12fe48ce6ebb52240f5e45e0f0eddf"
+    },
+    {
+      "source": "action-journal",
+      "name": "acc2.sqlite3",
+      "bytes": 57344,
+      "sha256": "30d765881833021b12750157a61f818cfb9c518d20fe88d4e2afb2276e08e660"
+    },
+    {
+      "source": "action-journal",
+      "name": "acc3.sqlite3",
+      "bytes": 57344,
+      "sha256": "99c4cd65058827b8f6eae8c81ce66459d83f641042c05d73d3ea8636c692b7ac"
+    },
+    {
+      "source": "action-journal",
+      "name": "acc4.sqlite3",
+      "bytes": 53248,
+      "sha256": "bbda0fad6fd45e8ea46cc6dc8e85ac2e787f695a71e895820cca9246ba611b8a"
+    },
+    {
+      "source": "action-journal",
+      "name": "acc5.sqlite3",
+      "bytes": 602112,
+      "sha256": "fe344a0f71b091f5a0032fec36f8753a1b4fe19558c34fa108ae4442a4bd95cf"
+    },
+    {
+      "source": "action-journal",
+      "name": "acc6.sqlite3",
+      "bytes": 225280,
+      "sha256": "32626422fdee65a225417a9c6aed00d66a59e64c80ccbbb49ba062eff52838f5"
+    },
+    {
+      "source": "action-journal",
+      "name": "acc7.sqlite3",
+      "bytes": 294912,
+      "sha256": "7ff2d9164139040e50e630fdf409d13b4914c4ed9f32902996d73bea715e0e36"
+    },
+    {
+      "source": "action-journal",
+      "name": "acc8.sqlite3",
+      "bytes": 36864,
+      "sha256": "f8fb47cb70fc7d3d3e57f50723e6f6a2d621be8c37aea789a762056e8afa5e24"
+    },
+    {
+      "source": "action-journal",
+      "name": "acc9.sqlite3",
+      "bytes": 147456,
+      "sha256": "79a8c55cfa567834be08f34b608d3484ee91fcdad9789446c9884a1344ecd8ef"
+    },
+    {
+      "source": "action-journal",
+      "name": "acc10.sqlite3",
+      "bytes": 45056,
+      "sha256": "070c42a0e32c6561f11bc4f7ca113c39104a66dc8426e4a27005faae388447be"
+    }
+  ]
+}
