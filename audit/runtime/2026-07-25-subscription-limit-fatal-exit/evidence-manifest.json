@@ -1,7 +1,22 @@
 {
   "captured_at": "2026-07-25",
-  "raw_artifacts_committed": false,
-  "reason": "Raw runtime artifacts contain mutable databases, local paths, account configuration metadata, and a 137 MB metrics stream. This manifest preserves identity without publishing those files.",
+  "raw_metrics_committed": true,
+  "mutable_databases_committed": false,
+  "reason": "The exact metrics streams are committed as lossless compressed archives. Mutable SQLite databases and account configuration remain local.",
+  "metric_archives": [
+    {
+      "name": "failed-run-metrics.jsonl.tar.gz",
+      "bytes": 14207250,
+      "sha256": "0106a9b82a074a825e0e85aa2632d6e233c6c4a6566d7ddaf83a47749769b9d9",
+      "contains": "metrics.jsonl"
+    },
+    {
+      "name": "recovery-run-metrics.jsonl.tar.gz",
+      "bytes": 6810,
+      "sha256": "1369838c5f074bdabddee2bd6d597cb76db525a8d32ef59b1dda934bb51df99c",
+      "contains": "metrics.jsonl"
+    }
+  ],
   "artifacts": [
     {
       "source": "failed-run",
