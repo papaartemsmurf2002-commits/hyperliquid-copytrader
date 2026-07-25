@@ -1,0 +1,54 @@
+{
+  "total_actions": 747,
+  "terminal_state_counts": {
+    "CANCELED": 1,
+    "FILLED": 617,
+    "PARTIALLY_FILLED": 4,
+    "REJECTED": 125
+  },
+  "nonterminal_actions": 0,
+  "duplicate_cloids": 0,
+  "per_slot": {
+    "acc1": {
+      "total": 23,
+      "states": {"FILLED": 23}
+    },
+    "acc2": {
+      "total": 17,
+      "states": {"FILLED": 17}
+    },
+    "acc3": {
+      "total": 19,
+      "states": {"FILLED": 19}
+    },
+    "acc4": {
+      "total": 15,
+      "states": {"FILLED": 15}
+    },
+    "acc5": {
+      "total": 337,
+      "states": {"FILLED": 334, "REJECTED": 3}
+    },
+    "acc6": {
+      "total": 111,
+      "states": {"CANCELED": 1, "FILLED": 110}
+    },
+    "acc7": {
+      "total": 151,
+      "states": {"FILLED": 31, "PARTIALLY_FILLED": 2, "REJECTED": 118}
+    },
+    "acc8": {
+      "total": 2,
+      "states": {"FILLED": 2}
+    },
+    "acc9": {
+      "total": 67,
+      "states": {"FILLED": 61, "PARTIALLY_FILLED": 2, "REJECTED": 4}
+    },
+    "acc10": {
+      "total": 5,
+      "states": {"FILLED": 5}
+    }
+  },
+  "source": "Read-only aggregation of the ten SQLite action journals after the authorized recovery closeout."
+}
