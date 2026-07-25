@@ -1,7 +1,7 @@
 # Agent repository map — Hyperliquid Copytrader
 
 > **Mapped base:** `main` at `597321a7fb898173c0facf0ec3ee2f09a85a05e0` (PR #14 merge).  
-> **Exhaustive scope:** **229 tracked base files**, **31,749,997 bytes**, **160 Python files**, **74 test modules**. Every base path appears exactly once in [the complete inventory](#complete-tracked-file-inventory). Python files were AST-parsed; text/config/evidence files were read; both runtime metric archives were decompressed and JSON-parsed.
+> **Exhaustive scope:** **229 tracked base files**, **31,749,997 bytes**, **160 Python files**, **74 Python files under `tests/`**. Every base path appears exactly once in [the complete inventory](#complete-tracked-file-inventory). Python files were AST-parsed; text/config/evidence files were read; both runtime metric archives were decompressed and JSON-parsed.
 
 ## Read this first
 
@@ -113,7 +113,7 @@ Runtime state belongs on local NTFS under `%LOCALAPPDATA%`, not the OneDrive che
 
 ## Test and CI map
 
-The base contains **74 `test_*.py` modules**. Critical tests cluster around continuous runtime/network, action-journal durability, WS response classification, stream continuity, restart/locks, credential isolation, preflight, minimum notional and browser controller behavior. `scripts/check_critical_coverage.py` enforces focused coverage floors; `pyproject.toml` sets the broad coverage floor. CI runs full quality checks on Ubuntu and a Python 3.11-3.14 Windows matrix; CodeQL and Dependabot are configured separately.
+The base contains **74 Python files under `tests/`, including 69 `test_*.py` modules**. Critical tests cluster around continuous runtime/network, action-journal durability, WS response classification, stream continuity, restart/locks, credential isolation, preflight, minimum notional and browser controller behavior. `scripts/check_critical_coverage.py` enforces focused coverage floors; `pyproject.toml` sets the broad coverage floor. CI runs full quality checks on Ubuntu and a Python 3.11-3.14 Windows matrix; CodeQL and Dependabot are configured separately.
 
 ## Complete tracked-file inventory
 
