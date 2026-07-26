@@ -37,6 +37,54 @@ jobs:
           ready=true
           : > "$report"
 
+          python - <<'PY' >> "$report" 2>&1
+          from __future__ import annotations
+
+          import hashlib
+          from pathlib import Path
+
+          path = Path('.github/runtime-hardening-payload/part-07')
+          expected = '50250e71dd65c71c868bd420b66d83f225c8682a'
+          alphabet = b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
+
+          def git_blob_sha(data: bytes | bytearray) -> str:
+              payload = b'blob ' + str(len(data)).encode('ascii') + b'\0' + bytes(data)
+              return hashlib.sha1(payload).hexdigest()
+
+          data = bytearray(path.read_bytes())
+          before = git_blob_sha(data)
+          print(f'part_07_before={before}')
+          if before != expected:
+              matches: list[tuple[int, int, int, bytes]] = []
+              for index, original in enumerate(data):
+                  for replacement in alphabet:
+                      if replacement == original:
+                          continue
+                      data[index] = replacement
+                      if git_blob_sha(data) == expected:
+                          matches.append((index, original, replacement, bytes(data)))
+                  data[index] = original
+              if len(matches) != 1:
+                  raise RuntimeError(
+                      f'expected one part-07 repair, found {len(matches)}'
+                  )
+              index, original, replacement, corrected = matches[0]
+              path.write_bytes(corrected)
+              print(
+                  f'part_07_repaired_index={index} '
+                  f'from={chr(original)!r} to={chr(replacement)!r}'
+              )
+          after = git_blob_sha(path.read_bytes())
+          print(f'part_07_after={after}')
+          if after != expected:
+              raise RuntimeError(f'part-07 hash mismatch after repair: {after}')
+          PY
+          repair_status=$?
+          echo "repair_status=$repair_status" >> "$report"
+          if [ "$repair_status" -ne 0 ]; then
+            ready=false
+          fi
+
           echo "payload parts:" >> "$report"
           for file in .github/runtime-hardening-payload/part-*; do
             printf '%s\t%s\t%s bytes\n' \
