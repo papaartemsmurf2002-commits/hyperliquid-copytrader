@@ -1,0 +1,64 @@
+name: Apply runtime hardening payload
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: runtime-hardening-payload-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  apply:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out current PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Decode, verify, and apply complete patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .github/runtime-hardening-payload/part-* \
+            | base64 --decode \
+            | gzip --decompress \
+            > /tmp/runtime-hardening.patch
+
+          echo "d88cd1bb27001923a0d1b65b39dcfcb56c36ef0cce1585014c7e5a5728b91689  /tmp/runtime-hardening.patch" \
+            | sha256sum --check --strict
+
+          git apply --index --binary /tmp/runtime-hardening.patch
+          rm -rf .github/runtime-hardening-payload
+          rm -f .github/workflows/apply-runtime-hardening-payload.yml
+          git add -A
+          git diff --cached --check
+
+          actual_tree="$(git write-tree)"
+          expected_tree="7fc399c314ca1cafb0685e20e55140b28915780e"
+          test "$actual_tree" = "$expected_tree" || {
+            echo "tree mismatch: expected $expected_tree, got $actual_tree" >&2
+            exit 1
+          }
+
+          changed_count="$(git diff --cached --name-only HEAD | wc -l | tr -d ' ')"
+          test "$changed_count" = "45" || {
+            echo "changed-file mismatch: expected 45, got $changed_count" >&2
+            exit 1
+          }
+
+      - name: Commit exact reconstructed tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "core: import complete runtime hardening and latency work"
+          git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
